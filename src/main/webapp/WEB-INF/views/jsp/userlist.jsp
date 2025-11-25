@@ -10,15 +10,14 @@
 </head>
 
 <body>
+   <div class="generic-container">
+       <div class="panel panel-default">
+         <div class="panel-heading"><span class="lead">List of Users </span></div>
 
+            <!-- контент, наприклад таблиця з користувачами -->
+           </div>
+       </div>
+   </div>
 </body>
-
-
-
-
-
-
-
-
 
 </html>
