@@ -1,6 +1,7 @@
 package domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 @Entity
 @Table(name="USERS")
@@ -11,18 +12,30 @@ public class User {
     @Column(name = "USER_ID")
     private Long id;
 
-    @Column(name = "NAME", length = 100)
+    @NotBlank(message = "Name cannot be empty")
+    @Size(max = 100, message = "Name must be less than 100 characters")
+    @Column(name = "NAME", length = 100, nullable = false)
     private String name;
 
-    @Column(name = "EMAIL", length = 100)
+    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Invalid email format")
+    @Size(max = 100)
+    @Column(name = "EMAIL", length = 100, unique = true)
     private String email;
 
-    @Column(name = "PASSWORD", length = 100)
+    @NotBlank(message = "Password cannot be empty")
+    @Size(min = 6, max = 100, message = "Password must be 6–100 characters")
+    @Column(name = "PASSWORD", length = 100, nullable = false)
     private String password;
 
+    @Pattern(
+            regexp = "^\\+?[0-9]{7,20}$",
+            message = "Phone number must contain only digits and optional +"
+    )
     @Column(name = "PHONE_NUMBER", length = 20)
     private String phone;
 
+    @NotNull(message = "User role cannot be null")
     @Enumerated(EnumType.STRING)
     @Column(name = "USER-ROLE")
     private UserRole userRole;
