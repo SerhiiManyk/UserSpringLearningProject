@@ -1,4 +1,4 @@
-package domain;
+package com.manser.pr.domain;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;

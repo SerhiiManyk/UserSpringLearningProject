@@ -1,7 +1,7 @@
-package dao.impl;
+package com.manser.pr.dao.impl;
 
-import dao.UserDao;
-import domain.User;
+import com.manser.pr.dao.UserDao;
+import com.manser.pr.domain.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;

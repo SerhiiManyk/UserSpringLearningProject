@@ -1,6 +1,6 @@
-package dao;
+package com.manser.pr.dao;
 
-import domain.User;
+import com.manser.pr.domain.User;
 
 import java.util.List;
 
