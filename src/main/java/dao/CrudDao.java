@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface CrudDao<E> {
 
-    void save(E entity);
+    Long save(E entity);
 
     void update(E entity);
 

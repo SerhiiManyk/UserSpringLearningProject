@@ -2,6 +2,8 @@ package dao.impl;
 
 import dao.UserDao;
 import domain.User;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,34 +13,48 @@ import java.util.List;
 @Transactional
 public class UserDaoImpl implements UserDao {
 
+    private final SessionFactory sessionFactory;
 
-    @Override
-    public List<User> findAllUsers() {
-        return List.of();
+    public UserDaoImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
+    private Session getSession() {
+        return sessionFactory.getCurrentSession();
     }
 
     @Override
-    public void save(User entity) {
+    public List<User> findAllUsers() {
+        return getSession()
+                .createQuery("FROM User ORDER BY id", User.class)
+                .getResultList();
+    }
 
+    @Override
+    public Long save(User entity) {
+        getSession().save(entity);
+        return entity.getId();
     }
 
     @Override
     public void update(User entity) {
-
+        getSession().update(entity);
     }
 
     @Override
     public void delete(User entity) {
-
+        getSession().delete(entity);
     }
 
     @Override
     public User getById(Long id) {
-        return null;
+        return getSession().get(User.class, id);
     }
 
     @Override
     public List<User> getAll() {
-        return List.of();
+        return getSession()
+                .createQuery("FROM User", User.class)
+                .getResultList();
     }
 }
