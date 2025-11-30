@@ -10,7 +10,7 @@ public interface CrudService<E> {
 
     void delete(E entity);
 
-    E getById(int id);
+    E getById(Long id);
 
     List<E> getAll();
 }
