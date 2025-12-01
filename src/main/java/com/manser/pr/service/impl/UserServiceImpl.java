@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static org.springframework.orm.hibernate3.SessionFactoryUtils.getSession;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -27,8 +29,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void update(User entity) {
+    public User update(User entity) {
         userDao.update(entity);
+        return entity;
     }
 
     @Override

@@ -37,8 +37,9 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void update(User entity) {
+    public User update(User entity) {
         getSession().update(entity);
+        return entity;
     }
 
     @Override

@@ -6,7 +6,7 @@ public interface CrudDao<E> {
 
     Long save(E entity);
 
-    void update(E entity);
+    E update(E entity);
 
     void delete(E entity);
 

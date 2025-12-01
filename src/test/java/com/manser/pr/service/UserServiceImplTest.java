@@ -6,9 +6,14 @@ import com.manser.pr.domain.UserRole;
 import com.manser.pr.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceImplTest {
@@ -34,5 +39,12 @@ public class UserServiceImplTest {
     @BeforeEach
     public void init() {
         userService = new UserServiceImpl(userDao);
+    }
+
+    @Test
+    public void updateTest(){
+        when(userDao.getById(any(Long.class))).thenReturn(testUser);
+        when(userDao.update(any(User.class))).then(returnsFirstArg());
+
     }
 }
