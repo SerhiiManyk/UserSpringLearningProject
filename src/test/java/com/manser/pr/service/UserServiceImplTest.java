@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceImplTest {
@@ -24,9 +24,19 @@ public class UserServiceImplTest {
 
     private UserServiceImpl userService;
 
+    private User testUser;
+
     @BeforeEach
     public void init() {
         userService = new UserServiceImpl(userDao);
+
+        testUser = new User(
+                1L,
+                "Petro",
+                "petro@mail.com",
+                "12345",
+                "503-808-557",
+                UserRole.PATIENT);
     }
 
     @Test
@@ -34,7 +44,7 @@ public class UserServiceImplTest {
         when(userDao.update(any(User.class))).then(returnsFirstArg());
 
         User userForUpdate = new User(
-                2L,
+                testUser.getId(),
                 "Ivan",
                 "ivan@mail.com",
                 "67890",
@@ -64,6 +74,16 @@ public class UserServiceImplTest {
         Long resultId = userService.save(userForSave);
 
         assertEquals(10L, resultId);
+    }
+
+    @Test
+    public void deleteTest(){
+
+        userService.delete(testUser);
+
+        verify(userDao).delete(testUser);
+        verify(userDao, times(1)).delete(testUser);
+        verifyNoMoreInteractions(userDao);
     }
 
 
