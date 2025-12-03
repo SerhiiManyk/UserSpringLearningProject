@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -98,6 +100,21 @@ public class UserServiceImplTest {
         assertEquals(testUser.getEmail(), result.getEmail());
 
         verify(userDao, times(1)).getById(testId);
+    }
+
+    @Test
+    public void getAllTest() {
+        List<User> users = List.of(testUser);
+
+        when(userDao.getAll()).thenReturn(users);
+
+        List<User> result = userService.getAll();
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(testUser.getId(), result.get(0).getId());
+
+        verify(userDao, times(1)).getAll();
     }
 
 
