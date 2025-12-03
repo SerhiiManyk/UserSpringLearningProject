@@ -71,9 +71,7 @@ public class UserServiceImplTest {
                 "111-222-333",
                 UserRole.PATIENT);
 
-        Long resultId = userService.save(userForSave);
-
-        assertEquals(10L, resultId);
+        assertEquals(10L, userService.save(userForSave));
     }
 
     @Test
@@ -84,6 +82,22 @@ public class UserServiceImplTest {
         verify(userDao).delete(testUser);
         verify(userDao, times(1)).delete(testUser);
         verifyNoMoreInteractions(userDao);
+    }
+
+    @Test
+    public void getByIdTest(){
+        when(userService.getById(any(Long.class))).thenReturn(testUser);
+
+        Long testId = testUser.getId();
+
+        User result = userService.getById(testId);
+
+        assertNotNull(result);
+        assertEquals(testUser.getId(), result.getId());
+        assertEquals(testUser.getName(), result.getName());
+        assertEquals(testUser.getEmail(), result.getEmail());
+
+        verify(userDao, times(1)).getById(testId);
     }
 
 
