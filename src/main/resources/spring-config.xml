@@ -42,4 +42,10 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <!-- MessageSource for message validation -->
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="messages"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+
 </beans>
