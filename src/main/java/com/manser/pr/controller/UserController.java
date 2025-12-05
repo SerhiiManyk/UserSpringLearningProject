@@ -2,8 +2,6 @@ package com.manser.pr.controller;
 
 import com.manser.pr.domain.User;
 import com.manser.pr.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +16,6 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-
-    @Autowired
-    MessageSource messageSource;
 
     @GetMapping(value = {"/users"})
     public String listUsers(Model model){
