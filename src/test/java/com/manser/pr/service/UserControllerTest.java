@@ -1,6 +1,8 @@
 package com.manser.pr.service;
 
 import com.manser.pr.controller.UserController;
+import com.manser.pr.domain.User;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,6 +11,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ui.Model;
 import org.springframework.ui.ExtendedModelMap;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class UserControllerTest {
@@ -28,10 +37,25 @@ public class UserControllerTest {
 
     @Test
     public void shouldReturnUserListView(){
+        when(userService.getAll()).thenReturn(List.of(new User(), new User()));
+
+        String viewName = userController.listUsers(model);
+
+        Assertions.assertEquals("userlist", viewName);
+        Assertions.assertTrue(model.containsAttribute("users"));
+        verify(userService).getAll();
     }
 
     @Test
     public void shouldAddUsersToModel(){
+        List<User> users = List.of(new User(), new User());
+        when(userService.getAll()).thenReturn(users);
+
+        userController.listUsers(model);
+
+        Assertions.assertTrue(model.containsAttribute("users"));
+        Assertions.assertEquals(users, ((ExtendedModelMap)model).get("users"));
+        verify(userService).getAll();
     }
 
     @Test
