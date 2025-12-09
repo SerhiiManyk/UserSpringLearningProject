@@ -60,10 +60,28 @@ public class UserControllerTest {
 
     @Test
     public void shouldReturnRegistrationViewForNewUser(){
+        String viewName = userController.newUser(model);
+
+        Assertions.assertEquals("registration", viewName);
+
+        Assertions.assertTrue(model.containsAttribute("user"));
+        Assertions.assertInstanceOf(User.class, ((ExtendedModelMap) model).get("user"));
+
+        Assertions.assertTrue(model.containsAttribute("edit"));
+        Assertions.assertEquals(false, ((ExtendedModelMap)model).get("edit"));
     }
 
     @Test
     public void shouldAddEmptyUserToModel(){
+        String viewName = userController.newUser(model);
+
+        Assertions.assertEquals("registration", viewName);
+
+        Assertions.assertTrue(model.containsAttribute("user"));
+        Assertions.assertNotEquals(null, ((ExtendedModelMap)model).get("user"));
+        Assertions.assertInstanceOf(User.class, ((ExtendedModelMap) model).get("user"));
+
+        Assertions.assertEquals(false, ((ExtendedModelMap)model).get("edit"));
     }
 
     @Test
