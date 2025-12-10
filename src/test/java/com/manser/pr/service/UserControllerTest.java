@@ -43,6 +43,16 @@ public class UserControllerTest {
         model = new ExtendedModelMap();
     }
 
+    public User createUser() {
+        return new User(
+                1L,
+                "Petro",
+                "petro@mail.com",
+                "12345",
+                "503-808-557",
+                UserRole.PATIENT);
+    }
+
     @Test
     public void shouldReturnUserListView() {
         when(userService.getAll()).thenReturn(List.of(new User(), new User()));
@@ -103,17 +113,10 @@ public class UserControllerTest {
 
     @Test
     public void shouldReturnRegistrationViewWhenValidationFails() {
-        User testUser = new User(
-                1L,
-                "Petro",
-                "petro@mail.com",
-                "12345",
-                "503-808-557",
-                UserRole.PATIENT);
 
         when(bindingResult.hasErrors()).thenReturn(true);
 
-        String viewName = userController.saveUser(testUser, bindingResult, redirectAttributes);
+        String viewName = userController.saveUser(createUser(), bindingResult, redirectAttributes);
 
         Assertions.assertEquals("registration", viewName);
         verifyNoInteractions(redirectAttributes);
@@ -122,13 +125,7 @@ public class UserControllerTest {
 
     @Test
     public void shouldSaveUserWhenValid() {
-        User testUser = new User(
-                1L,
-                "Petro",
-                "petro@mail.com",
-                "12345",
-                "503-808-557",
-                UserRole.PATIENT);
+        User testUser = createUser();
 
         when(bindingResult.hasErrors()).thenReturn(false);
 
@@ -144,13 +141,7 @@ public class UserControllerTest {
 
     @Test
     public void shouldRedirectToSuccessAfterSaving() {
-        User testUser = new User(
-                1L,
-                "Petro",
-                "petro@mail.com",
-                "12345",
-                "503-808-557",
-                UserRole.PATIENT);
+        User testUser = createUser();
 
         when(bindingResult.hasErrors()).thenReturn(false);
 
@@ -163,13 +154,7 @@ public class UserControllerTest {
 
     @Test
     public void shouldAddSuccessFlashMessage() {
-        User testUser = new User(
-                1L,
-                "Petro",
-                "petro@mail.com",
-                "12345",
-                "503-808-557",
-                UserRole.PATIENT);
+        User testUser = createUser();
 
         when(bindingResult.hasErrors()).thenReturn(false);
 
@@ -184,13 +169,7 @@ public class UserControllerTest {
     public void shouldReturnRegistrationViewForEditMode() {
         Long userId = 1L;
 
-        User testUser = new User(
-                userId,
-                "Petro",
-                "petro@mail.com",
-                "12345",
-                "503-808-557",
-                UserRole.PATIENT);
+        User testUser = createUser();
 
         when(userService.getById(userId)).thenReturn(testUser);
 
@@ -201,14 +180,40 @@ public class UserControllerTest {
 
     @Test
     public void shouldAddExistingUserToModel() {
+        User testUser = createUser();
+
+        when(userService.getById(1L)).thenReturn(testUser);
+
+        String viewName = userController.editUser(1L, model);
+
+        Assertions.assertEquals("registration", viewName);
+        Assertions.assertEquals(testUser, ((ExtendedModelMap) model).get("user"));
+        Assertions.assertTrue(model.containsAttribute("user"));
+        Assertions.assertTrue(model.containsAttribute("edit"));
+        Assertions.assertEquals(true, ((ExtendedModelMap) model).get("edit"));
     }
 
     @Test
     public void shouldSetEditFlagToTrue() {
+        User testUser = createUser();
+
+        when(userService.getById(1L)).thenReturn(testUser);
+
+        String viewName = userController.editUser(1L, model);
+
+        Assertions.assertEquals(true, ((ExtendedModelMap) model).get("edit"));
     }
 
     @Test
     public void shouldReturnRegistrationViewWhenUpdateValidationFails() {
+        User testUser = createUser();
+
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        String viewName = userController.updateUser(testUser, bindingResult, redirectAttributes);
+
+        Assertions.assertEquals("registration", viewName);
+        verify(userService, never()).save(any());
     }
 
     @Test
