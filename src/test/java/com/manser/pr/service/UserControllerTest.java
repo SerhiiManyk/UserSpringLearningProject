@@ -17,8 +17,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -233,28 +231,52 @@ public class UserControllerTest {
     public void shouldRedirectToSuccessAfterUpdating() {
         User testUser = createUser();
 
-        when(bindingResult.hasErrors()).thenReturn(true);
+        when(bindingResult.hasErrors()).thenReturn(false);
 
         String viewName = userController.updateUser(testUser, bindingResult, redirectAttributes);
+
+        Assertions.assertEquals("redirect:/registrationsuccess", viewName);
+        verify(redirectAttributes).addFlashAttribute(eq("success"), eq("User Petro updated successfully"));
     }
 
     @Test
     public void shouldAddSuccessFlashMessageOnUpdate() {
+        User testUser = createUser();
+
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        String viewName = userController.updateUser(testUser, bindingResult, redirectAttributes);
+
+        verify(redirectAttributes).addFlashAttribute(eq("success"), eq("User Petro updated successfully"));
     }
 
     @Test
     public void shouldDeleteExistingUser() {
-    }
+        User testUser = createUser();
 
-    @Test
-    public void shouldRedirectToUsersAfterDelete() {
+        when(userService.getById(1L)).thenReturn(testUser);
+
+        String viewName = userController.deleteUser(testUser.getId());
+
+        verify(userService).delete(testUser);
+        Assertions.assertEquals("redirect:/users", viewName);
     }
 
     @Test
     public void shouldDoNothingIfUserNotFound() {
+        when(userService.getById(1L)).thenReturn(null);
+
+        String viewName = userController.deleteUser(1L);
+
+        verify(userService, never()).delete(any());
+        Assertions.assertEquals("redirect:/users", viewName);
+
     }
 
     @Test
     public void shouldReturnSuccessPageView() {
+        String viewName = userController.successPage();
+
+        Assertions.assertEquals("registrationsuccess", viewName);
     }
 }
