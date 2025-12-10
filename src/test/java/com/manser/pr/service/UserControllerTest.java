@@ -218,10 +218,24 @@ public class UserControllerTest {
 
     @Test
     public void shouldUpdateUserWhenValid() {
+        User testUser = createUser();
+
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        String viewName = userController.updateUser(testUser, bindingResult, redirectAttributes);
+
+        Assertions.assertEquals("redirect:/registrationsuccess", viewName);
+        verify(userService, times(1)).update(testUser);
+        verify(redirectAttributes).addFlashAttribute(eq("success"), eq("User Petro updated successfully"));
     }
 
     @Test
     public void shouldRedirectToSuccessAfterUpdating() {
+        User testUser = createUser();
+
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        String viewName = userController.updateUser(testUser, bindingResult, redirectAttributes);
     }
 
     @Test
