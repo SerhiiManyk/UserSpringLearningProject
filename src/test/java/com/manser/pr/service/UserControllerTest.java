@@ -144,14 +144,59 @@ public class UserControllerTest {
 
     @Test
     public void shouldRedirectToSuccessAfterSaving() {
+        User testUser = new User(
+                1L,
+                "Petro",
+                "petro@mail.com",
+                "12345",
+                "503-808-557",
+                UserRole.PATIENT);
+
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        String viewName = userController.saveUser(testUser,
+                bindingResult,
+                redirectAttributes);
+
+        Assertions.assertEquals("redirect:/registrationsuccess", viewName);
     }
 
     @Test
     public void shouldAddSuccessFlashMessage() {
+        User testUser = new User(
+                1L,
+                "Petro",
+                "petro@mail.com",
+                "12345",
+                "503-808-557",
+                UserRole.PATIENT);
+
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        String viewName = userController.saveUser(testUser,
+                bindingResult,
+                redirectAttributes);
+
+        verify(redirectAttributes).addFlashAttribute(eq("success"), eq("User Petro registered successfully"));
     }
 
     @Test
     public void shouldReturnRegistrationViewForEditMode() {
+        Long userId = 1L;
+
+        User testUser = new User(
+                userId,
+                "Petro",
+                "petro@mail.com",
+                "12345",
+                "503-808-557",
+                UserRole.PATIENT);
+
+        when(userService.getById(userId)).thenReturn(testUser);
+
+        String viewName = userController.editUser(userId, model);
+
+        Assertions.assertEquals("registration", viewName);
     }
 
     @Test
