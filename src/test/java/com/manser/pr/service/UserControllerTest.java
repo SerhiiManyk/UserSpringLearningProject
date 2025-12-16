@@ -211,7 +211,7 @@ public class UserControllerTest {
         String viewName = userController.updateUser(testUser, bindingResult, redirectAttributes, model);
 
         Assertions.assertEquals("registration", viewName);
-        verify(userService, never()).save(any());
+        verify(userService, never()).update(any());
     }
 
     @Test
