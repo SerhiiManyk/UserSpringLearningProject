@@ -208,7 +208,7 @@ public class UserControllerTest {
 
         when(bindingResult.hasErrors()).thenReturn(true);
 
-        String viewName = userController.updateUser(testUser, bindingResult, redirectAttributes);
+        String viewName = userController.updateUser(testUser, bindingResult, redirectAttributes, model);
 
         Assertions.assertEquals("registration", viewName);
         verify(userService, never()).save(any());
@@ -220,7 +220,7 @@ public class UserControllerTest {
 
         when(bindingResult.hasErrors()).thenReturn(false);
 
-        String viewName = userController.updateUser(testUser, bindingResult, redirectAttributes);
+        String viewName = userController.updateUser(testUser, bindingResult, redirectAttributes, model);
 
         Assertions.assertEquals("redirect:/registrationsuccess", viewName);
         verify(userService, times(1)).update(testUser);
@@ -233,7 +233,7 @@ public class UserControllerTest {
 
         when(bindingResult.hasErrors()).thenReturn(false);
 
-        String viewName = userController.updateUser(testUser, bindingResult, redirectAttributes);
+        String viewName = userController.updateUser(testUser, bindingResult, redirectAttributes, model);
 
         Assertions.assertEquals("redirect:/registrationsuccess", viewName);
         verify(redirectAttributes).addFlashAttribute(eq("success"), eq("User Petro updated successfully"));
@@ -245,7 +245,7 @@ public class UserControllerTest {
 
         when(bindingResult.hasErrors()).thenReturn(false);
 
-        String viewName = userController.updateUser(testUser, bindingResult, redirectAttributes);
+        String viewName = userController.updateUser(testUser, bindingResult, redirectAttributes,model);
 
         verify(redirectAttributes).addFlashAttribute(eq("success"), eq("User Petro updated successfully"));
     }

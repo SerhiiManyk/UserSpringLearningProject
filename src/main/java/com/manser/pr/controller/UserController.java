@@ -63,8 +63,10 @@ public class UserController {
     @PostMapping("/edit-user-{id}")
     public String updateUser(@Valid User user,
                              BindingResult result,
-                             RedirectAttributes redirectAttributes){
+                             RedirectAttributes redirectAttributes,
+                             Model model){
         if (result.hasErrors()) {
+            model.addAttribute("edit",true);
             return "registration";
         }
         userService.update(user);
