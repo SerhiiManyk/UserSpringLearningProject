@@ -10,7 +10,8 @@
     <link rel="stylesheet" href="<c:url value='/resources/static/css/app.css'/>">
 </head>
 
-<body>
+<body style="background-color: #c3e6cb;">
+
      <div class="panel-heading">
           <h1 class="display-4 text-center mb-4">
               Welcome to User Spring Learning Project

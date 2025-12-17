@@ -94,8 +94,4 @@ public class UserController {
         return "login";
     }
 
-    @GetMapping("/welcome")
-    public String welcomePage() {
-        return "welcome";
-    }
 }
