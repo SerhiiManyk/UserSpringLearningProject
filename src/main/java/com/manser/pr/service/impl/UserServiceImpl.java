@@ -47,7 +47,8 @@ public class UserServiceImpl implements UserService {
         return userDao.getAll();
     }
 
-    private User loginUser(String email, String password) {
+    @Override
+    public User loginUser(String email, String password) {
         return userDao.getByEmailAndPassword(email, password);
     }
 }
