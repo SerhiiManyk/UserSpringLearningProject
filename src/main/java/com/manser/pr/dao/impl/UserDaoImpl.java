@@ -7,7 +7,6 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Parameter;
 import java.util.List;
 
 @Repository
@@ -60,6 +59,7 @@ public class UserDaoImpl implements UserDao {
                 .getResultList();
     }
 
+    @Override
     public User getByEmailAndPassword(String email, String password) {
         List<User> users = getSession()
                 .createQuery(

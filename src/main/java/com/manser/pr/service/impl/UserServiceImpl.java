@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static org.springframework.orm.hibernate3.SessionFactoryUtils.getSession;
-
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -47,5 +45,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAll() {
         return userDao.getAll();
+    }
+
+    private User loginUser(String email, String password) {
+        return userDao.getByEmailAndPassword(email, password);
     }
 }
