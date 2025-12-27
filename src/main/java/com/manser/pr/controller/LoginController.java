@@ -1,12 +1,16 @@
 package com.manser.pr.controller;
 
+import com.manser.pr.domain.LoginForm;
+import com.manser.pr.domain.User;
 import com.manser.pr.service.UserService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
 
 @Controller
 public class LoginController {
@@ -23,10 +27,18 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String loginCheck(Model model,
+    public String loginCheck(@Valid LoginForm loginForm,
                              BindingResult result,
                              RedirectAttributes redirectAttributes) {
-
-        return "redirect:/users";
+        if (result.hasErrors()) {
+            return "login";
+        }
+        User user = userService.loginUser(loginForm.getEmail(), loginForm.getPassword());
+        if (user == null) {
+            result.addError(new ObjectError("loginForm", "Invalid email or password"));
+            return "login";
+        }else {
+            return "redirect:/users";
+        }
     }
 }
