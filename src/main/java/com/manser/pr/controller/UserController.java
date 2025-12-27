@@ -89,9 +89,4 @@ public class UserController {
         return "registrationsuccess";
     }
 
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login";
-    }
-
 }
