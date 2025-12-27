@@ -1,16 +1,19 @@
 package com.manser.pr.service;
 
 import com.manser.pr.controller.LoginController;
-import org.junit.jupiter.api.BeforeEach;
+import com.manser.pr.domain.LoginForm;
+import com.manser.pr.domain.User;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class LoginControllerTest {
@@ -27,61 +30,53 @@ public class LoginControllerTest {
     @InjectMocks
     private LoginController loginController;
 
-    private Model model;
-
-    @BeforeEach
-    void setUp() {
-        model = new ExtendedModelMap();
+    public LoginForm getLoginForm() {
+        LoginForm form = new LoginForm();
+        form.setEmail("test@mail.com");
+        form.setPassword("123456");
+        return form;
     }
 
     @Test
     public void shouldReturnLoginViewWhenValidationFails() {
-        // Arrange
-        // симулювати BindingResult.hasErrors() -> true
 
-        // Act
-        // виклик loginController.loginCheck(...)
+        when(bindingResult.hasErrors()).thenReturn(true);
 
-        // Assert
-        // перевірити, що viewName = "login"
+        String viewName = loginController.loginCheck(getLoginForm(), bindingResult, redirectAttributes);
+
+        Assertions.assertEquals("login", viewName);
     }
 
     @Test
     public void shouldReturnLoginViewWhenUserNotFound() {
-        // Arrange
-        // симулювати BindingResult.hasErrors() -> false
-        // симулювати userService.loginUser(...) -> null
 
-        // Act
-        // виклик loginController.loginCheck(...)
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(userService.loginUser(getLoginForm().getEmail(), getLoginForm().getPassword())).thenReturn(null);
 
-        // Assert
-        // перевірити, що viewName = "login"
-        // перевірити, що в BindingResult додана помилка "Invalid email or password"
+        String viewName = loginController.loginCheck(getLoginForm(), bindingResult, redirectAttributes);
+
+        Assertions.assertEquals("login", viewName);
+        verify(userService).loginUser(getLoginForm().getEmail(), getLoginForm().getPassword());
+        verify(bindingResult).addError(
+                argThat(error ->
+                        error instanceof ObjectError &&
+                                error.getObjectName().equals("loginForm") &&
+                                error.getDefaultMessage().equals("Invalid email or password")
+                )
+        );
     }
 
     @Test
     public void shouldRedirectToUsersWhenLoginSuccessful() {
-        // Arrange
-        // симулювати BindingResult.hasErrors() -> false
-        // симулювати userService.loginUser(...) -> User
 
-        // Act
-        // виклик loginController.loginCheck(...)
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(userService.loginUser(getLoginForm().getEmail(), getLoginForm().getPassword())).thenReturn(new User());
 
-        // Assert
-        // перевірити, що viewName = "redirect:/users"
+        String viewName = loginController.loginCheck(getLoginForm(), bindingResult, redirectAttributes);
+
+        Assertions.assertEquals("redirect:/users", viewName);
+        verify(userService).loginUser(getLoginForm().getEmail(), getLoginForm().getPassword());
+        verify(bindingResult, never()).addError(any());
     }
 
-    @Test
-    public void shouldAddUserToModelWhenValidationFails() {
-        // Arrange
-        // симулювати BindingResult.hasErrors() -> true
-
-        // Act
-        // виклик loginController.loginCheck(...)
-
-        // Assert
-        // перевірити, що модель містить loginForm або порожній об’єкт
-    }
 }
