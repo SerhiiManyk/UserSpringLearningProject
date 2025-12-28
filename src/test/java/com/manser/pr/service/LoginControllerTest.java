@@ -61,7 +61,7 @@ public class LoginControllerTest {
                 argThat(error ->
                         error instanceof ObjectError &&
                                 error.getObjectName().equals("loginForm") &&
-                                error.getDefaultMessage().equals("Invalid email or password")
+                                error.getCode().equals("login.invalid")
                 )
         );
     }

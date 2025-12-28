@@ -35,7 +35,7 @@ public class LoginController {
         }
         User user = userService.loginUser(loginForm.getEmail(), loginForm.getPassword());
         if (user == null) {
-            result.addError(new ObjectError("loginForm", "Invalid email or password"));
+            result.reject("login.invalid");
             return "login";
         }else {
             return "redirect:/users";
