@@ -16,15 +16,17 @@
  	<div class="generic-container">
 	<div class="well lead">Please Login to enter to User List</div>
 
-           <div class="alert alert-danger">
-                <form:errors path=""/>
-           </div>
+    <form:errors path="*" cssClass="alert alert-danger"/>
 
 	<form:form method="POST"
 	        modelAttribute="loginForm"
 	        action="${pageContext.request.contextPath}/login"
 	        class="form-horizontal">
 
+            <!-- GLOBAL ERROR -->
+	        <form:errors path="*" cssClass="alert alert-danger"/>
+
+            <!-- EMAIL -->
 			<div class="row">
     			<div class="form-group col-md-12">
     				<label class="col-md-3 control-label" for="email"> Email</label>
@@ -37,6 +39,7 @@
     			</div>
     		</div>
 
+            <!-- PASSWORD -->
     		<div class="row">
             	<div class="form-group col-md-12">
             		<label class="col-md-3 control-label" for="password"> Password </label>
@@ -49,6 +52,7 @@
             	</div>
             </div>
 
+            <!-- BUTTONS -->
             <div class="row mb-3">
                 <div class="col text-end">
 

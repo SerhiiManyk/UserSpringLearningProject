@@ -8,7 +8,7 @@ public class LoginForm {
 
     @NotBlank(message = "{NotEmpty.login.email}")
     @Email(message = "{Email.login.email}")
-    @Size(max = 100)
+    @Size(max = 100, message = "{Size.login.email}")
     private String email;
 
     @NotBlank(message = "{NotEmpty.login.password}")
