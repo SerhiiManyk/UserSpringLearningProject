@@ -4,6 +4,7 @@ import com.manser.pr.domain.LoginForm;
 import com.manser.pr.domain.User;
 import com.manser.pr.service.UserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,8 @@ public class LoginController {
     }
 
     @GetMapping("/login")
-    public String loginPage() {
+    public String loginPage(Model model) {
+        model.addAttribute("loginForm", new LoginForm());
         return "login";
     }
 
