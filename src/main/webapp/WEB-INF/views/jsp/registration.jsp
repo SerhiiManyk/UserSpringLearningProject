@@ -54,6 +54,18 @@
 			</div>
 		</div>
 
+		<div class="row">
+			<div class="form-group col-md-12">
+				<label class="col-md-3 control-label" for="phone"> Phone number</label>
+				<div class="col-md-7">
+					<form:input type="text" path="phone" id="phone" class="form-control input-sm"/>
+					<div class="has-error">
+						<form:errors path="phone" class="help-inline"/>
+					</div>
+				</div>
+			</div>
+		</div>
+
         <div class="row mb-3">
             <div class="col text-end">
                 <c:choose>
@@ -63,7 +75,7 @@
                     </c:when>
                     <c:otherwise>
                         <button type="submit" class="btn btn-primary btn-sm">Register</button>
-                        <a href="<c:url value='/users' />" class="btn btn-secondary btn-sm">Cancel</a>
+                        <a href="<c:url value='/welcome' />" class="btn btn-secondary btn-sm">Cancel</a>
                     </c:otherwise>
                 </c:choose>
             </div>
