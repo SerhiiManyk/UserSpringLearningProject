@@ -66,6 +66,22 @@
 			</div>
 		</div>
 
+        <div class="row mb-4">
+            <div class="form-group col-md-12">
+                <label class="col-md-3 control-label" for="userRole">Role</label>
+                <div class="col-md-7">
+                    <form:select path="userRole" id="userRole" class="form-control input-sm">
+                        <form:option value="" label="-- Select role --"/>
+                        <form:options items="${roles}"/>
+                    </form:select>
+
+                    <div class="has-error">
+                        <form:errors path="userRole" class="help-inline"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row mb-3">
             <div class="col text-end">
                 <c:choose>

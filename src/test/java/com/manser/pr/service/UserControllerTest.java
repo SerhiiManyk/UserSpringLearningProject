@@ -48,7 +48,7 @@ public class UserControllerTest {
                 "petro@mail.com",
                 "12345",
                 "503-808-557",
-                UserRole.PATIENT);
+                UserRole.REGULAR_USER);
     }
 
     @Test

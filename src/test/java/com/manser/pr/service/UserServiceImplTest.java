@@ -38,7 +38,7 @@ public class UserServiceImplTest {
                 "petro@mail.com",
                 "12345",
                 "503-808-557",
-                UserRole.PATIENT);
+                UserRole.REGULAR_USER);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class UserServiceImplTest {
                 "ivan@mail.com",
                 "67890",
                 "111-222-333",
-                UserRole.PATIENT);
+                UserRole.REGULAR_USER);
 
         User result = userService.update(userForUpdate);
 
@@ -71,7 +71,7 @@ public class UserServiceImplTest {
                 "ivan@mail.com",
                 "67890",
                 "111-222-333",
-                UserRole.PATIENT);
+                UserRole.REGULAR_USER);
 
         assertEquals(10L, userService.save(userForSave));
     }
