@@ -256,7 +256,7 @@ public class UserControllerTest {
 
         when(userService.getById(1L)).thenReturn(testUser);
 
-        String viewName = userController.deleteUser(testUser.getId());
+        String viewName = userController.deleteUser(testUser.getId(),redirectAttributes);
 
         verify(userService).delete(testUser);
         Assertions.assertEquals("redirect:/users", viewName);
@@ -266,7 +266,7 @@ public class UserControllerTest {
     public void shouldDoNothingIfUserNotFound() {
         when(userService.getById(1L)).thenReturn(null);
 
-        String viewName = userController.deleteUser(1L);
+        String viewName = userController.deleteUser(1L, redirectAttributes);
 
         verify(userService, never()).delete(any());
         Assertions.assertEquals("redirect:/users", viewName);

@@ -81,12 +81,13 @@ public class UserController {
         return "redirect:/registrationsuccess";
     }
 
-    @GetMapping("/delete-user-{id}")
-    public String deleteUser(@PathVariable Long id){
+    @PostMapping("/delete-user-{id}")
+    public String deleteUser(@PathVariable Long id,RedirectAttributes redirectAttributes){
         User user = userService.getById(id);
 
         if (user != null) {
             userService.delete(user);
+            redirectAttributes.addFlashAttribute("success", "User " + user.getName() + " deleted successfully");
         }
         return "redirect:/users";
     }

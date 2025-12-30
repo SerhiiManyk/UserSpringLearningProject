@@ -38,8 +38,17 @@
 
                     <td><a href="<c:url value='/edit-user-${user.id}'/>" class="btn btn-success custom-width">edit</a>
                     </td>
-                    <td><a href="<c:url value='/delete-user-${user.id}'/>"
-                         class="btn btn-danger custom-width">delete</a></td>
+
+                    <td>
+                        <button type="button" class="btn btn-danger"
+                                data-toggle="modal"
+                                data-target="#deleteModal"
+                                data-user-id="${user.id}"
+                                data-user-name="${user.name}">
+                                Delete
+                        </button>
+                    </td>
+
                 </tr>
            </c:forEach>
            </tbody>
@@ -48,6 +57,45 @@
            <div class="well">
                <a href="<c:url value='/newuser'/>">Add New User</a>
            </div>
+
+           <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+             <div class="modal-dialog" role="document">
+               <div class="modal-content">
+                 <form id="deleteForm" method="post">
+                     <div class="modal-header">
+                       <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                         <span aria-hidden="true">&times;</span>
+                       </button>
+                     </div>
+                     <div class="modal-body">
+                       Are you sure you want to delete user <strong id="modalUserName"></strong>?
+                     </div>
+                     <div class="modal-footer">
+                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                       <button type="submit" class="btn btn-danger">Delete</button>
+                     </div>
+                 </form>
+               </div>
+             </div>
+           </div>
 </div>
+
+<script src="<c:url value='/resources/static/js/jquery.min.js'/>"></script>
+<script src="<c:url value='/resources/static/js/bootstrap.min.js'/>"></script>
+
+<script type="text/javascript">
+    var contextPath = '/ambulatory/';
+
+  $('#deleteModal').on('show.bs.modal', function(event) {
+      var button = $(event.relatedTarget);
+      var userId = button.data('user-id');
+      var userName = button.data('user-name');
+      var modal = $(this);
+      modal.find('#modalUserName').text(userName);
+      modal.find('#deleteForm').attr('action', contextPath + 'delete-user-' + userId);
+  });
+</script>
+
 </body>
 </html>
