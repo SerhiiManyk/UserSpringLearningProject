@@ -16,15 +16,16 @@
  	<div class="generic-container">
 	<div class="well lead">Please Login to enter to User List</div>
 
-    <form:errors path="*" cssClass="alert alert-danger"/>
+    <c:if test="${not empty errors and errors.fieldErrorCount == 0}">
+        <div class="alert alert-danger">
+            <form:errors path="" />
+        </div>
+    </c:if>
 
 	<form:form method="POST"
 	        modelAttribute="loginForm"
 	        action="${pageContext.request.contextPath}/login"
 	        class="form-horizontal">
-
-            <!-- GLOBAL ERROR -->
-	        <form:errors path="*" cssClass="alert alert-danger"/>
 
             <!-- EMAIL -->
 			<div class="row">
