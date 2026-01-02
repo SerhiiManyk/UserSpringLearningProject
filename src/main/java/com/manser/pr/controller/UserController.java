@@ -3,6 +3,7 @@ package com.manser.pr.controller;
 import com.manser.pr.domain.User;
 import com.manser.pr.domain.UserRole;
 import com.manser.pr.service.UserService;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,41 +30,46 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public String listUsers(Model model){
+    public String listUsers(Model model) {
 
         model.addAttribute("users", userService.getAll());
         return "userlist";
     }
 
     @GetMapping("/newuser")
-    public String newUser (Model model){
-        model.addAttribute("user",new User());
-        model.addAttribute("edit",false);
+    public String newUser(Model model) {
+        model.addAttribute("user", new User());
+        model.addAttribute("edit", false);
         return "registration";
     }
 
     @PostMapping("/newuser")
     public String saveUser(@Valid User user,
                            BindingResult result,
-                           RedirectAttributes redirectAttributes){
+                           RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
             return "registration";
         }
-
-        userService.save(user);
+        try {
+            userService.save(user);
+        } catch (ConstraintViolationException e) {
+            redirectAttributes.addFlashAttribute("success", "FALE " + e.getMessage());
+        } catch (Exception except) {
+            except.getMessage();
+        }
         redirectAttributes.addFlashAttribute("success", "User " + user.getName() + " registered successfully");
         return "redirect:/registrationsuccess";
     }
 
     @GetMapping("/edit-user-{id}")
-    public String editUser(@PathVariable Long id, Model model){
+    public String editUser(@PathVariable Long id, Model model) {
         User user = userService.getById(id);
         if (user == null) {
             return "redirect:/users";
         }
         model.addAttribute("user", user);
-        model.addAttribute("edit",true);
+        model.addAttribute("edit", true);
         return "registration";
     }
 
@@ -71,18 +77,18 @@ public class UserController {
     public String updateUser(@Valid User user,
                              BindingResult result,
                              RedirectAttributes redirectAttributes,
-                             Model model){
+                             Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("edit",true);
+            model.addAttribute("edit", true);
             return "registration";
         }
         userService.update(user);
-        redirectAttributes.addFlashAttribute("success","User " + user.getName() + " updated successfully");
+        redirectAttributes.addFlashAttribute("success", "User " + user.getName() + " updated successfully");
         return "redirect:/registrationsuccess";
     }
 
     @PostMapping("/delete-user-{id}")
-    public String deleteUser(@PathVariable Long id,RedirectAttributes redirectAttributes){
+    public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         User user = userService.getById(id);
 
         if (user != null) {
