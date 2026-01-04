@@ -11,4 +11,6 @@ public interface UserService extends CrudService<User>{
     User loginUser(String email, String password);
 
     User getByEmail(String email);
+
+    void checkEmailUnique(User user);
 }

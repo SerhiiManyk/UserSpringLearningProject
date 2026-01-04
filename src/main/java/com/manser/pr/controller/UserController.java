@@ -2,6 +2,7 @@ package com.manser.pr.controller;
 
 import com.manser.pr.domain.User;
 import com.manser.pr.domain.UserRole;
+import com.manser.pr.exception.UserAlreadyExistsException;
 import com.manser.pr.service.UserService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Controller;
@@ -52,9 +53,10 @@ public class UserController {
             return "registration";
         }
         try {
+            userService.checkEmailUnique(user);
             userService.save(user);
-        } catch (ConstraintViolationException e) {
-            redirectAttributes.addFlashAttribute("registrationfail", "FALE " + e.getMessage());
+        } catch (UserAlreadyExistsException e) {
+            redirectAttributes.addFlashAttribute("registrationfail", e.getMessage());
             return "redirect:/successfull";
         } catch (Exception j) {
             redirectAttributes.addFlashAttribute("registrationfail", "WRONG REGISTRATION " + j.getMessage());
@@ -84,7 +86,16 @@ public class UserController {
             model.addAttribute("edit", true);
             return "registration";
         }
-        userService.update(user);
+        try {
+            userService.checkEmailUnique(user);
+            userService.update(user);
+        } catch (UserAlreadyExistsException e) {
+            redirectAttributes.addFlashAttribute("registrationfail", e.getMessage());
+            return "redirect:/successfull";
+        } catch (Exception j) {
+            redirectAttributes.addFlashAttribute("registrationfail", "WRONG UPDATE : " + j.getMessage());
+            return "redirect:/successfull";
+        }
         redirectAttributes.addFlashAttribute("success", "User " + user.getName() + " updated successfully");
         return "redirect:/registrationsuccess";
     }

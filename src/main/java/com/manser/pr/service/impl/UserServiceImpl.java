@@ -2,6 +2,7 @@ package com.manser.pr.service.impl;
 
 import com.manser.pr.dao.UserDao;
 import com.manser.pr.domain.User;
+import com.manser.pr.exception.UserAlreadyExistsException;
 import com.manser.pr.service.UserService;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Long save(User entity) {
+
         return userDao.save(entity);
     }
 
@@ -55,5 +57,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getByEmail(String email) {
         return userDao.getByEmail(email);
+    }
+
+    public void checkEmailUnique(User user) {
+        User existingUser = getByEmail(user.getEmail());
+        if (existingUser != null && !existingUser.getId().equals(user.getId())) {
+            throw new UserAlreadyExistsException(
+                    "Email " + user.getEmail() + " is already taken"
+            );
+        }
     }
 }
