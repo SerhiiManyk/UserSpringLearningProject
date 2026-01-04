@@ -54,9 +54,11 @@ public class UserController {
         try {
             userService.save(user);
         } catch (ConstraintViolationException e) {
-            redirectAttributes.addFlashAttribute("success", "FALE " + e.getMessage());
-        } catch (Exception except) {
-            except.getMessage();
+            redirectAttributes.addFlashAttribute("registrationfail", "FALE " + e.getMessage());
+            return "redirect:/newuser";
+        } catch (Exception j) {
+            redirectAttributes.addFlashAttribute("registrationfail", "WRONG REGISTRATION " + j.getMessage());
+            return "redirect:/newuser";
         }
         redirectAttributes.addFlashAttribute("success", "User " + user.getName() + " registered successfully");
         return "redirect:/registrationsuccess";
