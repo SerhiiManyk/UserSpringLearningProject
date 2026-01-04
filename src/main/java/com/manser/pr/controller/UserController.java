@@ -55,10 +55,10 @@ public class UserController {
             userService.save(user);
         } catch (ConstraintViolationException e) {
             redirectAttributes.addFlashAttribute("registrationfail", "FALE " + e.getMessage());
-            return "redirect:/newuser";
+            return "redirect:/successfull";
         } catch (Exception j) {
             redirectAttributes.addFlashAttribute("registrationfail", "WRONG REGISTRATION " + j.getMessage());
-            return "redirect:/newuser";
+            return "redirect:/successfull";
         }
         redirectAttributes.addFlashAttribute("success", "User " + user.getName() + " registered successfully");
         return "redirect:/registrationsuccess";
@@ -103,6 +103,11 @@ public class UserController {
     @GetMapping("/registrationsuccess")
     public String successPage() {
         return "registrationsuccess";
+    }
+
+    @GetMapping("/successfull")
+    public String successFullPage() {
+        return "successfull";
     }
 
 }
