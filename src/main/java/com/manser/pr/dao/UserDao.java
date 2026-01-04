@@ -9,4 +9,6 @@ public interface UserDao extends CrudDao<User> {
     List<User> findAllUsers();
 
     User getByEmailAndPassword(String email, String password);
+
+    User getByEmail(String email);
 }

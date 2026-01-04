@@ -9,4 +9,6 @@ public interface UserService extends CrudService<User>{
     List<User> findAllUsers();
 
     User loginUser(String email, String password);
+
+    User getByEmail(String email);
 }

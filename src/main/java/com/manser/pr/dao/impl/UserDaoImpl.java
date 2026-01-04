@@ -72,4 +72,17 @@ public class UserDaoImpl implements UserDao {
 
         return users.isEmpty() ? null : users.get(0);
     }
+
+    @Override
+    public User getByEmail(String email) {
+        List<User> users = getSession()
+                .createQuery(
+                        "FROM User u WHERE u.email = :email",
+                        User.class
+                )
+                .setParameter("email", email)
+                .getResultList();
+
+        return users.isEmpty() ? null : users.get(0);
+    }
 }
