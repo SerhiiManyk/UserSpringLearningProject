@@ -4,7 +4,6 @@ import com.manser.pr.domain.User;
 import com.manser.pr.domain.UserRole;
 import com.manser.pr.exception.UserAlreadyExistsException;
 import com.manser.pr.service.UserService;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -48,7 +47,6 @@ public class UserController {
     public String saveUser(@Valid User user,
                            BindingResult result,
                            RedirectAttributes redirectAttributes) {
-
         if (result.hasErrors()) {
             return "registration";
         }

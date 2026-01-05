@@ -2,6 +2,7 @@ package com.manser.pr.dao.impl;
 
 import com.manser.pr.dao.UserDao;
 import com.manser.pr.domain.User;
+import com.manser.pr.exception.UserDeleteException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
@@ -44,7 +45,12 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void delete(User entity) {
-        getSession().delete(entity);
+        try {
+            getSession().delete(entity);
+        } catch (Exception e) {
+            throw new UserDeleteException(
+                    "Cannot delete user. It may be used by other records.", e);
+        }
     }
 
     @Override
