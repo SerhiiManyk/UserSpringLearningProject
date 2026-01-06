@@ -49,7 +49,7 @@ public class UserDaoImpl implements UserDao {
             getSession().delete(entity);
         } catch (Exception e) {
             throw new UserDeleteException(
-                    "Cannot delete user. It may be used by other records.", e);
+            "Cannot delete user. It may be used by other records.", e);
         }
     }
 
