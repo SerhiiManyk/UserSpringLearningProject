@@ -1,6 +1,8 @@
 package com.manser.pr.dao.impl;
 
 import com.manser.pr.dao.UserDao;
+import com.manser.pr.domain.SortField;
+import com.manser.pr.domain.SortOrder;
 import com.manser.pr.domain.User;
 import com.manser.pr.exception.UserDeleteException;
 import org.hibernate.Session;
@@ -49,7 +51,7 @@ public class UserDaoImpl implements UserDao {
             getSession().delete(entity);
         } catch (Exception e) {
             throw new UserDeleteException(
-            "Cannot delete user. It may be used by other records.", e);
+                    "Cannot delete user. It may be used by other records.", e);
         }
     }
 
@@ -91,4 +93,12 @@ public class UserDaoImpl implements UserDao {
 
         return users.isEmpty() ? null : users.get(0);
     }
+
+    @Override
+    public List<User> sortAllUsers(SortField sortField, SortOrder sortOrder) {
+        return getSession()
+                .createQuery("FROM User u ORDER BY u." + sortField.getDbField() + " " + sortOrder.name(), User.class)
+                .getResultList();
+    }
+
 }
