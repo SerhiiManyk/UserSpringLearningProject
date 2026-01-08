@@ -1,5 +1,7 @@
 package com.manser.pr.controller;
 
+import com.manser.pr.domain.SortField;
+import com.manser.pr.domain.SortOrder;
 import com.manser.pr.domain.User;
 import com.manser.pr.domain.UserRole;
 import com.manser.pr.exception.UserAlreadyExistsException;
@@ -27,13 +29,6 @@ public class UserController {
     @ModelAttribute("roles")
     public UserRole[] roles() {
         return UserRole.values();
-    }
-
-    @GetMapping("/users")
-    public String listUsers(Model model) {
-
-        model.addAttribute("users", userService.getAll());
-        return "userlist";
     }
 
     @GetMapping("/newuser")
@@ -117,6 +112,20 @@ public class UserController {
     @GetMapping("/successfull")
     public String successFullPage() {
         return "successfull";
+    }
+
+    @GetMapping("/users")
+    public String sortedListUsers(SortField sortField,
+                                  SortOrder sortOrder,
+                                  Model model,
+                                  RedirectAttributes redirectAttributes) {
+        try {
+            model.addAttribute("users", userService.getAllSorted(sortField, sortOrder));
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("registrationfail", "SOMTHING WRONG : " + e.getMessage());
+            return "redirect:/successfull";
+        }
+        return "userlist";
     }
 
 }
