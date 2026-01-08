@@ -1,6 +1,8 @@
 package com.manser.pr.service.impl;
 
 import com.manser.pr.dao.UserDao;
+import com.manser.pr.domain.SortField;
+import com.manser.pr.domain.SortOrder;
 import com.manser.pr.domain.User;
 import com.manser.pr.exception.UserAlreadyExistsException;
 import com.manser.pr.service.UserService;
@@ -59,6 +61,7 @@ public class UserServiceImpl implements UserService {
         return userDao.getByEmail(email);
     }
 
+    @Override
     public void checkEmailUnique(User user) {
         User existingUser = getByEmail(user.getEmail());
         if (existingUser != null && !existingUser.getId().equals(user.getId())) {
@@ -66,5 +69,16 @@ public class UserServiceImpl implements UserService {
                     "Email " + user.getEmail() + " is already taken"
             );
         }
+    }
+
+    @Override
+    public List<User> getAllSorted(SortField sortField, SortOrder sortOrder) {
+     if(sortField == null){
+         return userDao.getAll();
+     }
+     if(sortOrder == null){
+         sortOrder = SortOrder.ASC;
+     }
+     return userDao.sortAllUsers(sortField, sortOrder);
     }
 }
