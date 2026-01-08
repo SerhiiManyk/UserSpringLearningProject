@@ -12,7 +12,30 @@
 <body>
 <div class="generic-container">
     <div class="panel panel-default">
-        <div class="panel-heading"><span class="lead">List of Users </span></div>
+        <div class="panel-heading d-flex justify-content-between align-items-center">
+            <span class="lead">List of Users</span>
+
+            <!-- Форма сортування -->
+            <form method="get" action="<c:url value='/users'/>" class="d-flex align-items-center">
+                <!-- Поле для вибору поля сортування -->
+                <select name="sortField" class="form-select form-select-sm me-2">
+                    <option value="">-- Sort by --</option>
+                    <option value="EMAIL">Email</option>
+                    <option value="NAME">Name</option>
+                    <option value="PHONE_NUMBER">Phone Number</option>
+                    <option value="ROLE">Role</option>
+                </select>
+
+                <!-- Поле для вибору напряму сортування -->
+                <select name="sortOrder" class="form-select form-select-sm me-2">
+                    <option value="ASC">Ascending</option>
+                    <option value="DESC">Descending</option>
+                </select>
+
+                <button type="submit" class="btn btn-primary btn-sm">Sort</button>
+            </form>
+        </div>
+            
         <table class="table table-hover">
             <thead>
             <tr>

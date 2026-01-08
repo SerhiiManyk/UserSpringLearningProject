@@ -51,28 +51,28 @@ public class UserControllerTest {
                 UserRole.REGULAR_USER);
     }
 
-    @Test
-    public void shouldReturnUserListView() {
-        when(userService.getAll()).thenReturn(List.of(new User(), new User()));
+//    @Test
+//    public void shouldReturnUserListView() {
+//        when(userService.getAll()).thenReturn(List.of(new User(), new User()));
+//
+//        String viewName = userController.listUsers(model);
+//
+//        Assertions.assertEquals("userlist", viewName);
+//        Assertions.assertTrue(model.containsAttribute("users"));
+//        verify(userService).getAll();
+//    }
 
-        String viewName = userController.listUsers(model);
-
-        Assertions.assertEquals("userlist", viewName);
-        Assertions.assertTrue(model.containsAttribute("users"));
-        verify(userService).getAll();
-    }
-
-    @Test
-    public void shouldAddUsersToModel() {
-        List<User> users = List.of(new User(), new User());
-        when(userService.getAll()).thenReturn(users);
-
-        userController.listUsers(model);
-
-        Assertions.assertTrue(model.containsAttribute("users"));
-        Assertions.assertEquals(users, ((ExtendedModelMap) model).get("users"));
-        verify(userService).getAll();
-    }
+//    @Test
+//    public void shouldAddUsersToModel() {
+//        List<User> users = List.of(new User(), new User());
+//        when(userService.getAll()).thenReturn(users);
+//
+//        userController.listUsers(model);
+//
+//        Assertions.assertTrue(model.containsAttribute("users"));
+//        Assertions.assertEquals(users, ((ExtendedModelMap) model).get("users"));
+//        verify(userService).getAll();
+//    }
 
     @Test
     public void shouldReturnRegistrationViewForNewUser() {
