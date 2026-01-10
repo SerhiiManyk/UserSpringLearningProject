@@ -14,5 +14,7 @@ public interface UserDao extends CrudDao<User> {
 
     User getByEmail(String email);
 
-    public List<User> sortAllUsers(SortField sortField, SortOrder sortOrder);
+    List<User> sortAllUsers(SortField sortField, SortOrder sortOrder);
+
+     List<User> searchUsers(SortField field, String searchValue, SortOrder sortOrder);
 }
