@@ -9,16 +9,16 @@
    <link href="<c:url value='/resources/static/css/app.css'/>" rel="stylesheet">
 </head>
 
-<body>
+<body style="background-color: #e9f2ff;">
 <div class="generic-container">
     <div class="panel panel-default">
-        <div class="panel-heading d-flex justify-content-between align-items-center">
-            <span class="lead">List of Users</span>
+        <div class="panel-heading clearfix">
+            <h3 class="panel-title pull-left">List of Users</h3>
 
             <!-- Форма сортування -->
-            <form method="get" action="<c:url value='/users'/>" class="d-flex align-items-center">
+            <form method="get" action="<c:url value='/users'/>" class="pull-right form-inline">
                 <!-- Поле для вибору поля сортування -->
-                <select name="sortField" class="form-select form-select-sm me-2">
+                <select name="sortField" class="form-control input-sm">
                     <option value="">-- Sort by --</option>
                     <option value="EMAIL">Email</option>
                     <option value="NAME">Name</option>
@@ -27,7 +27,7 @@
                 </select>
 
                 <!-- Поле для вибору напряму сортування -->
-                <select name="sortOrder" class="form-select form-select-sm me-2">
+                <select name="sortOrder" class="form-control input-sm">
                     <option value="ASC">Ascending</option>
                     <option value="DESC">Descending</option>
                 </select>
