@@ -87,6 +87,10 @@ public class UserServiceImpl implements UserService {
         if(sortField == null || searchValue==null || searchValue.trim().isEmpty()){
             return userDao.getAll();
         }
+        try {
         return userDao.searchUsers(sortField,searchValue);
+        } catch (Exception e) {
+            throw new RuntimeException("Search failed", e);
+        }
     }
 }

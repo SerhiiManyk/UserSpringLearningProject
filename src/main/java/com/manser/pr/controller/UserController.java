@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 public class UserController {
@@ -125,6 +126,22 @@ public class UserController {
             redirectAttributes.addFlashAttribute("registrationfail", "SOMTHING WRONG : " + e.getMessage());
             return "redirect:/successfull";
         }
+        return "userlist";
+    }
+
+    @GetMapping("/users")
+    public String searchingUsersList(
+            SortField sortField,
+            String searchValue,
+            Model model) {
+        List<User> resultList = userService.getSearchResult(sortField, searchValue);
+
+        model.addAttribute("users", resultList);
+
+        if (resultList.isEmpty()) {
+            model.addAttribute("infoMessage", "No results found");
+        }
+
         return "userlist";
     }
 
