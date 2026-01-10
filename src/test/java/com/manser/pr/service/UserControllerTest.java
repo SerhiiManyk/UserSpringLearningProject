@@ -1,6 +1,8 @@
 package com.manser.pr.service;
 
 import com.manser.pr.controller.UserController;
+import com.manser.pr.domain.SortField;
+import com.manser.pr.domain.SortOrder;
 import com.manser.pr.domain.User;
 import com.manser.pr.domain.UserRole;
 import org.junit.jupiter.api.Assertions;
@@ -51,28 +53,28 @@ public class UserControllerTest {
                 UserRole.REGULAR_USER);
     }
 
-//    @Test
-//    public void shouldReturnUserListView() {
-//        when(userService.getAll()).thenReturn(List.of(new User(), new User()));
-//
-//        String viewName = userController.listUsers(model);
-//
-//        Assertions.assertEquals("userlist", viewName);
-//        Assertions.assertTrue(model.containsAttribute("users"));
-//        verify(userService).getAll();
-//    }
+    @Test
+    public void shouldReturnUserListSortByName() {
+        when(userService.getAllSorted(SortField.NAME,SortOrder.ASC)).thenReturn(List.of(new User(), new User()));
 
-//    @Test
-//    public void shouldAddUsersToModel() {
-//        List<User> users = List.of(new User(), new User());
-//        when(userService.getAll()).thenReturn(users);
-//
-//        userController.listUsers(model);
-//
-//        Assertions.assertTrue(model.containsAttribute("users"));
-//        Assertions.assertEquals(users, ((ExtendedModelMap) model).get("users"));
-//        verify(userService).getAll();
-//    }
+        String viewName = userController.sortedListUsers(SortField.NAME, SortOrder.ASC,model,redirectAttributes);
+
+        Assertions.assertEquals("userlist", viewName);
+        Assertions.assertTrue(model.containsAttribute("users"));
+        verify(userService).getAllSorted(SortField.NAME,SortOrder.ASC);
+    }
+
+    @Test
+    public void shouldAddUsersToModel() {
+        List<User> users = List.of(new User(), new User());
+        when(userService.getAllSorted(SortField.NAME,SortOrder.ASC)).thenReturn(users);
+
+        userController.sortedListUsers(SortField.NAME, SortOrder.ASC,model,redirectAttributes);
+
+        Assertions.assertTrue(model.containsAttribute("users"));
+        Assertions.assertEquals(users, ((ExtendedModelMap) model).get("users"));
+        verify(userService).getAllSorted(SortField.NAME,SortOrder.ASC);
+    }
 
     @Test
     public void shouldReturnRegistrationViewForNewUser() {
