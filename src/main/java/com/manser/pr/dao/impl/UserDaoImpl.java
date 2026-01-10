@@ -102,9 +102,9 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<User> searchUsers(SortField field, String searchValue, SortOrder sortOrder) {
+    public List<User> searchUsers(SortField field, String searchValue) {
         String hql = "FROM User u WHERE u." + field.getDbField() + " LIKE :searchValue ORDER BY u."
-                + field.getDbField() + " " + sortOrder.name();
+                + field.getDbField() + " ASC";
         return getSession()
                 .createQuery(hql, User.class)
                 .setParameter("searchValue", "%" + searchValue + "%")

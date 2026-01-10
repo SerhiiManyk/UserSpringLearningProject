@@ -16,5 +16,7 @@ public interface UserService extends CrudService<User>{
 
     void checkEmailUnique(User user);
 
-    public List<User> getAllSorted(SortField sortField, SortOrder sortOrder);
+    List<User> getAllSorted(SortField sortField, SortOrder sortOrder);
+
+    List<User> getSearchResult(SortField sortField, String searchValue);
 }

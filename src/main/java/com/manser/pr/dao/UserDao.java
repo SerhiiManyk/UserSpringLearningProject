@@ -16,5 +16,5 @@ public interface UserDao extends CrudDao<User> {
 
     List<User> sortAllUsers(SortField sortField, SortOrder sortOrder);
 
-     List<User> searchUsers(SortField field, String searchValue, SortOrder sortOrder);
+     List<User> searchUsers(SortField field, String searchValue);
 }

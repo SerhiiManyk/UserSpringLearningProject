@@ -81,4 +81,12 @@ public class UserServiceImpl implements UserService {
      }
      return userDao.sortAllUsers(sortField, sortOrder);
     }
+
+    @Override
+    public List<User> getSearchResult(SortField sortField, String searchValue) {
+        if(sortField == null || searchValue==null || searchValue.trim().isEmpty()){
+            return userDao.getAll();
+        }
+        return userDao.searchUsers(sortField,searchValue);
+    }
 }
