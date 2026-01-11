@@ -16,7 +16,7 @@
             <h3 class="panel-title pull-left">List of Users</h3>
 
             <!-- Форма сортування -->
-            <form method="get" action="<c:url value='/users/sort'/>" class="pull-right form-inline">
+            <form method="get" action="<c:url value='/users'/>" class="pull-right form-inline">
                 <!-- Поле для вибору поля сортування -->
                 <select name="sortField" class="form-control input-sm">
                     <option value="">-- Sort by --</option>

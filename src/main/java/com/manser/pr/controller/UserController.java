@@ -115,7 +115,7 @@ public class UserController {
         return "successfull";
     }
 
-    @GetMapping("/users/sort")
+    @GetMapping("/users")
     public String sortedListUsers(SortField sortField,
                                   SortOrder sortOrder,
                                   Model model,
