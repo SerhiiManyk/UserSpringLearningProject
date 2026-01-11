@@ -7,6 +7,7 @@ import com.manser.pr.domain.User;
 import com.manser.pr.exception.UserDeleteException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -109,6 +110,27 @@ public class UserDaoImpl implements UserDao {
                 .createQuery(hql, User.class)
                 .setParameter("searchValue", "%" + searchValue + "%")
                 .getResultList();
+    }
+
+    public List<User> getAllUsersOrSearchByCriteria(SortField sortField,SortOrder sortOrder, String searchValue){
+        String hql = "FROM User u ";
+
+        boolean hasSearch = searchValue != null && !searchValue.isBlank() && sortField != null;
+
+        if(hasSearch){
+            hql += " WHERE u." + sortField.getDbField() + " LIKE :searchValue ";
+        }
+        if (sortField != null) {
+            hql += " ORDER BY u." + sortField.getDbField();
+            hql += (sortOrder != null ? " " + sortOrder.name() : " ASC");
+        }
+        Query<User> query= getSession().createQuery(hql.toString(), User.class);
+
+        if (hasSearch) {
+            query.setParameter("searchValue", "%" + searchValue + "%");
+        }
+
+        return query.getResultList();
     }
 
 }
