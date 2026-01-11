@@ -115,7 +115,7 @@ public class UserController {
         return "successfull";
     }
 
-    @GetMapping("/users")
+    @GetMapping("/users/sort")
     public String sortedListUsers(SortField sortField,
                                   SortOrder sortOrder,
                                   Model model,
@@ -129,7 +129,7 @@ public class UserController {
         return "userlist";
     }
 
-    @GetMapping("/users")
+    @GetMapping("/users/search")
     public String searchingUsersList(
             SortField sortField,
             String searchValue,

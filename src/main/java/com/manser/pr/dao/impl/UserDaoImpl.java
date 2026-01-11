@@ -124,7 +124,7 @@ public class UserDaoImpl implements UserDao {
             hql += " ORDER BY u." + sortField.getDbField();
             hql += (sortOrder != null ? " " + sortOrder.name() : " ASC");
         }
-        Query<User> query= getSession().createQuery(hql.toString(), User.class);
+        Query<User> query= getSession().createQuery(hql, User.class);
 
         if (hasSearch) {
             query.setParameter("searchValue", "%" + searchValue + "%");

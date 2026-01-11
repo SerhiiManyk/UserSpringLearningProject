@@ -16,7 +16,7 @@
             <h3 class="panel-title pull-left">List of Users</h3>
 
             <!-- Форма сортування -->
-            <form method="get" action="<c:url value='/users'/>" class="pull-right form-inline">
+            <form method="get" action="<c:url value='/users/sort'/>" class="pull-right form-inline">
                 <!-- Поле для вибору поля сортування -->
                 <select name="sortField" class="form-control input-sm">
                     <option value="">-- Sort by --</option>
@@ -35,6 +35,12 @@
                 <button type="submit" class="btn btn-primary btn-sm">Sort</button>
             </form>
         </div>
+
+            <c:if test="${not empty infoMessage}">
+                <div class="alert alert-info" style="margin: 10px;">
+                    ${infoMessage}
+                </div>
+            </c:if>
             
         <table class="table table-hover">
             <thead>
@@ -79,6 +85,26 @@
     </div>
            <div class="well">
                <a href="<c:url value='/newuser'/>">Add New User</a>
+
+                   <!-- Панель пошуку -->
+                   <form method="get" action="<c:url value='/users/search'/>" class="pull-right form-inline">
+                       <select name="sortField" class="form-control input-sm">
+                           <option value="">-- Search by --</option>
+                           <option value="EMAIL">Email</option>
+                           <option value="NAME">Name</option>
+                           <option value="PHONE_NUMBER">Phone Number</option>
+                           <option value="ROLE">Role</option>
+                       </select>
+
+                       <input type="text"
+                              name="searchValue"
+                              class="form-control input-sm"
+                              placeholder="Search..." />
+
+                       <button type="submit" class="btn btn-primary btn-sm">
+                           Search
+                       </button>
+                   </form>
            </div>
 
            <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
