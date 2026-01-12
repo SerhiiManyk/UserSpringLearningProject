@@ -4,6 +4,7 @@ import com.manser.pr.dao.UserDao;
 import com.manser.pr.domain.SortField;
 import com.manser.pr.domain.SortOrder;
 import com.manser.pr.domain.User;
+import com.manser.pr.domain.UserRole;
 import com.manser.pr.exception.UserDeleteException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -104,6 +105,16 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> searchUsers(SortField field, String searchValue) {
+
+        if (field == SortField.ROLE) {
+            UserRole role = UserRole.valueOf(searchValue.toUpperCase());
+
+            return getSession()
+                    .createQuery(
+                            "FROM User u WHERE u.userRole = :role", User.class)
+                    .setParameter("role", role)
+                    .getResultList();
+        }
         String hql = "FROM User u WHERE u." + field.getDbField() + " LIKE :searchValue ORDER BY u."
                 + field.getDbField() + " ASC";
         return getSession()
@@ -112,19 +123,19 @@ public class UserDaoImpl implements UserDao {
                 .getResultList();
     }
 
-    public List<User> getAllUsersOrSearchByCriteria(SortField sortField,SortOrder sortOrder, String searchValue){
+    public List<User> getAllUsersOrSearchByCriteria(SortField sortField, SortOrder sortOrder, String searchValue) {
         String hql = "FROM User u ";
 
         boolean hasSearch = searchValue != null && !searchValue.isBlank() && sortField != null;
 
-        if(hasSearch){
+        if (hasSearch) {
             hql += " WHERE u." + sortField.getDbField() + " LIKE :searchValue ";
         }
         if (sortField != null) {
             hql += " ORDER BY u." + sortField.getDbField();
             hql += (sortOrder != null ? " " + sortOrder.name() : " ASC");
         }
-        Query<User> query= getSession().createQuery(hql, User.class);
+        Query<User> query = getSession().createQuery(hql, User.class);
 
         if (hasSearch) {
             query.setParameter("searchValue", "%" + searchValue + "%");
