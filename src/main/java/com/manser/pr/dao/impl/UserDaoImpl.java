@@ -105,21 +105,19 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> searchUsers(SortField field, String searchValue) {
-
-        if (field == SortField.ROLE) {
-            UserRole role = UserRole.valueOf(searchValue.toUpperCase());
-
-            return getSession()
-                    .createQuery(
-                            "FROM User u WHERE u.userRole = :role", User.class)
-                    .setParameter("role", role)
-                    .getResultList();
-        }
         String hql = "FROM User u WHERE u." + field.getDbField() + " LIKE :searchValue ORDER BY u."
                 + field.getDbField() + " ASC";
         return getSession()
                 .createQuery(hql, User.class)
                 .setParameter("searchValue", "%" + searchValue + "%")
+                .getResultList();
+    }
+
+    @Override
+    public List<User> searchUsersByRole(UserRole role) {
+        return getSession()
+                .createQuery("FROM User u WHERE u.userRole = :role", User.class)
+                .setParameter("role", role)
                 .getResultList();
     }
 

@@ -4,6 +4,7 @@ import com.manser.pr.dao.UserDao;
 import com.manser.pr.domain.SortField;
 import com.manser.pr.domain.SortOrder;
 import com.manser.pr.domain.User;
+import com.manser.pr.domain.UserRole;
 import com.manser.pr.exception.UserAlreadyExistsException;
 import com.manser.pr.service.UserService;
 import org.springframework.stereotype.Service;
@@ -87,10 +88,13 @@ public class UserServiceImpl implements UserService {
         if(sortField == null || searchValue==null || searchValue.trim().isEmpty()){
             return userDao.getAll();
         }
-        try {
-        return userDao.searchUsers(sortField,searchValue);
-        } catch (Exception e) {
-            throw new RuntimeException("Search failed", e);
+        if (sortField == SortField.ROLE) {
+            try {
+                return userDao.searchUsersByRole(UserRole.valueOf(searchValue.trim().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid role value: " + searchValue);
+            }
         }
+        return userDao.searchUsers(sortField,searchValue);
     }
 }

@@ -3,6 +3,7 @@ package com.manser.pr.dao;
 import com.manser.pr.domain.SortField;
 import com.manser.pr.domain.SortOrder;
 import com.manser.pr.domain.User;
+import com.manser.pr.domain.UserRole;
 
 import java.util.List;
 
@@ -17,4 +18,6 @@ public interface UserDao extends CrudDao<User> {
     List<User> sortAllUsers(SortField sortField, SortOrder sortOrder);
 
      List<User> searchUsers(SortField field, String searchValue);
+
+    List<User> searchUsersByRole(UserRole role);
 }
