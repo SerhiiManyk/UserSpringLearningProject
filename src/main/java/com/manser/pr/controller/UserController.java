@@ -134,14 +134,18 @@ public class UserController {
             SortField sortField,
             String searchValue,
             Model model) {
-        List<User> resultList = userService.getSearchResult(sortField, searchValue);
+        try {
+            List<User> resultList = userService.getSearchResult(sortField, searchValue);
 
-        model.addAttribute("users", resultList);
+            model.addAttribute("users", resultList);
 
-        if (resultList.isEmpty()) {
-            model.addAttribute("infoMessage", "No results found");
+            if (resultList.isEmpty()) {
+                model.addAttribute("infoMessage", "No results found");
+            }
+        }catch (IllegalArgumentException e) {
+            model.addAttribute("users", List.of());
+            model.addAttribute("infoMessage", e.getMessage());
         }
-
         return "userlist";
     }
 
