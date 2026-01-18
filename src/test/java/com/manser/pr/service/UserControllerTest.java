@@ -18,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 import static org.mockito.Mockito.*;
 
@@ -341,29 +342,107 @@ public class UserControllerTest {
 
     @Test
     public void shouldSearchUsersByRole(){
+        SortField sortField = SortField.ROLE;
+        String searchValue = "REGULAR_USER";
+        List<User> users = List.of(createUser());
+
+        when(userService.getSearchResult(sortField, searchValue)).thenReturn(users);
+
+        String viewName = userController.searchingUsersList(sortField, searchValue, model);
+
+        verify(userService).getSearchResult(sortField, searchValue);
+        Assertions.assertEquals("userlist", viewName);
+        Assertions.assertTrue(model.containsAttribute("users"));
+        Assertions.assertEquals(users, ((ExtendedModelMap) model).get("users"));
+        Assertions.assertFalse(model.containsAttribute("infoMessage"));
     }
 
     @Test
     public void shouldReturnAllUsersWhenSearchParamsAreMissing(){
+        SortField sortField = null;
+        String searchValue = null;
+        List<User> users = List.of(new User(), new User());
+
+        when(userService.getSearchResult(sortField, searchValue)).thenReturn(users);
+
+        String viewName = userController.searchingUsersList(sortField, searchValue, model);
+
+        verify(userService).getSearchResult(sortField, searchValue);
+        Assertions.assertEquals("userlist", viewName);
+        Assertions.assertTrue(model.containsAttribute("users"));
+        Assertions.assertEquals(users, ((ExtendedModelMap) model).get("users"));
+        Assertions.assertFalse(model.containsAttribute("infoMessage"));
     }
 
     @Test
     public void shouldReturnUserListWhenSortParamsAreNull(){
-    }
+        SortField sortField = null;
+        SortOrder sortOrder = null;
+        List<User> users = List.of(new User(), new User());
 
-    @Test
-    public void shouldHandleInvalidSortFieldGracefully(){
+        when(userService.getAllSorted(sortField, sortOrder)).thenReturn(users);
+
+        String viewName = userController.sortedListUsers(sortField,sortOrder,model,redirectAttributes);
+
+        verify(userService).getAllSorted(sortField, sortOrder);
+        Assertions.assertEquals("userlist", viewName);
+        Assertions.assertTrue(model.containsAttribute("users"));
+        Assertions.assertEquals(users, ((ExtendedModelMap) model).get("users"));
+        Assertions.assertFalse(model.containsAttribute("infoMessage"));
     }
 
     @Test
     public void shouldAddFlashMessageAfterDelete(){
+        User testUser = createUser();
+
+        when(userService.getById(1L)).thenReturn(testUser);
+
+        String viewName = userController.deleteUser(testUser.getId(), redirectAttributes);
+
+        verify(userService).delete(testUser);
+        verify(userService).getById(1L);
+        Assertions.assertEquals("redirect:/users", viewName);
+        verify(redirectAttributes).addFlashAttribute(eq("success"), anyString());
     }
 
     @Test
     public void shouldNotAddInfoMessageWhenResultsExist(){
+        SortField sortField = SortField.NAME;
+        String searchValue = "Petro";
+        List<User> users = List.of(createUser());
+
+        when(userService.getSearchResult(sortField, searchValue))
+                .thenReturn(users);
+
+        String viewName =
+                userController.searchingUsersList(sortField, searchValue, model);
+
+        verify(userService).getSearchResult(sortField, searchValue);
+
+        Assertions.assertEquals("userlist", viewName);
+        Assertions.assertTrue(model.containsAttribute("users"));
+        Assertions.assertEquals(users, ((ExtendedModelMap) model).get("users"));
+        Assertions.assertFalse(model.containsAttribute("infoMessage"));
     }
 
     @Test
     public void shouldHandleServiceExceptionGracefully(){
+        SortField sortField = SortField.ROLE;
+        String searchValue = "invalid_role";
+
+        when(userService.getSearchResult(sortField, searchValue))
+                .thenThrow(new IllegalArgumentException("Invalid role value"));
+
+        String viewName =
+                userController.searchingUsersList(sortField, searchValue, model);
+
+        verify(userService).getSearchResult(sortField, searchValue);
+
+        Assertions.assertEquals("userlist", viewName);
+        Assertions.assertTrue(model.containsAttribute("infoMessage"));
+        Assertions.assertEquals(
+                "Invalid role value",
+                ((ExtendedModelMap) model).get("infoMessage")
+        );
     }
 }
