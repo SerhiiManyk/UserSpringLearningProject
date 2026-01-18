@@ -1,5 +1,4 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
@@ -16,59 +15,54 @@
  	<div class="generic-container">
 	<div class="well lead">Please Login to enter to User List</div>
 
-    <c:if test="${not empty errors and errors.fieldErrorCount == 0}">
-        <div class="alert alert-danger">
-            <form:errors path="" />
-        </div>
-    </c:if>
 
-	<form:form method="POST"
-	        modelAttribute="loginForm"
-	        action="${pageContext.request.contextPath}/login"
-	        class="form-horizontal">
+    <!-- [NEW] Standard HTML form for Spring Security -->
+    <form method="post" action="<c:url value='/login'/>" class="form-horizontal">
 
-            <!-- EMAIL -->
-			<div class="row">
-    			<div class="form-group col-md-12">
-    				<label class="col-md-3 control-label" for="email"> Email</label>
-    				<div class="col-md-7">
-    					<form:input type="text" path="email" id="email" class="form-control input-sm"/>
-    					<div class="has-error">
-    						<form:errors path="email" class="help-inline"/>
-    					</div>
-    				</div>
-    			</div>
-    		</div>
-
-            <!-- PASSWORD -->
-    		<div class="row">
-            	<div class="form-group col-md-12">
-            		<label class="col-md-3 control-label" for="password"> Password </label>
-            			<div class="col-md-7">
-            				<form:password path="password" id="password" class="form-control input-sm" />
-            					<div class="has-error">
-            						<form:errors path="password" class="help-inline"/>
-            					</div>
-            			</div>
-            	</div>
-            </div>
-
-            <!-- BUTTONS -->
-            <div class="row mb-3">
-                <div class="col text-end">
-
-                    <button type="submit" class="btn btn-primary btn-sm">
-                        Login
-                    </button>
-
-                    <a href="<c:url value='/welcome'/>" class="btn btn-secondary btn-sm">
-                        Back
-                    </a>
-
+        <!-- EMAIL -->
+        <div class="row">
+            <div class="form-group col-md-12">
+                <label class="col-md-3 control-label" for="email"> Email</label>
+                <div class="col-md-7">
+                    <!-- [NEW] name="email" замість form:input з modelAttribute -->
+                    <input type="text" name="email" id="email" class="form-control input-sm" required/>
                 </div>
             </div>
+        </div>
 
-	</form:form>
+        <!-- PASSWORD -->
+        <div class="row">
+            <div class="form-group col-md-12">
+                <label class="col-md-3 control-label" for="password"> Password </label>
+                <div class="col-md-7">
+                    <!-- [NEW] name="password" замість form:password -->
+                    <input type="password" name="password" id="password" class="form-control input-sm" required/>
+                </div>
+            </div>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="row mb-3">
+            <div class="col text-end">
+                <button type="submit" class="btn btn-primary btn-sm">Login</button>
+                <a href="<c:url value='/welcome'/>" class="btn btn-secondary btn-sm">Back</a>
+            </div>
+        </div>
+
+        <!-- [NEW] Error and logout messages handled by Spring Security -->
+        <c:if test="${param.error != null}">
+            <div class="alert alert-danger">
+                Invalid email or password.
+            </div>
+        </c:if>
+
+        <c:if test="${param.logout != null}">
+            <div class="alert alert-success">
+                You have been logged out.
+            </div>
+        </c:if>
+
+    </form>
 	</div>
 </body>
 </html>
