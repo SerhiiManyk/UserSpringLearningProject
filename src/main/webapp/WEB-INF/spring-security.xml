@@ -20,16 +20,16 @@
 
         <!-- Форма логіну -->
         <form-login
-                login-page="/login"
-                default-target-url="/users"
-                authentication-failure-url="/login?error=true"
+                login-page="/ambulatory/login"
                 username-parameter="email"
-                password-parameter="password" />
+                password-parameter="password"
+                default-target-url="/ambulatory/users"
+                authentication-failure-url="/ambulatory/login?error=true"/>
 
         <!-- Logout -->
         <logout
                 logout-url="/logout"
-                logout-success-url="/login?logout=true"
+                logout-success-url="/ambulatory/login?logout=true"
                 invalidate-session="true" />
 
     </http>

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <html>
 <head>
@@ -65,9 +66,15 @@
                     <td>${user.phone}</td>
                     <td>${user.userRole}</td>
 
-                    <td><a href="<c:url value='/edit-user-${user.id}'/>" class="btn btn-success custom-width">edit</a>
-                    </td>
+                    <!-- Редагування: доступне для ADMIN та REGULAR -->
+                    <sec:authorize access="hasAnyRole('ROLE_ADMINISTRATOR','ROLE_REGULAR_USER')">
+                        <td>
+                            <a href="<c:url value='/edit-user-${user.id}'/>" class="btn btn-success custom-width">edit</a>
+                        </td>
+                    </sec:authorize>
 
+                    <!-- Видалення: доступне лише для ADMIN -->
+                    <sec:authorize access="hasRole('ROLE_ADMINISTRATOR')">
                     <td>
                         <button type="button" class="btn btn-danger"
                                 data-toggle="modal"
@@ -77,14 +84,20 @@
                                 Delete
                         </button>
                     </td>
+                    </sec:authorize>
 
                 </tr>
            </c:forEach>
            </tbody>
         </table>
     </div>
-           <div class="well">
-               <a href="<c:url value='/newuser'/>">Add New User</a>
+
+    <!-- Add New User: доступне тільки для ADMIN -->
+    <sec:authorize access="hasRole('ROLE_ADMINISTRATOR')">
+        <div class="well">
+            <a href="<c:url value='/newuser'/>" class="btn btn-primary btn-sm">Add New User</a>
+        </div>
+    </sec:authorize>
 
                    <!-- Панель пошуку -->
                    <form method="get" action="<c:url value='/users/search'/>" class="pull-right form-inline">

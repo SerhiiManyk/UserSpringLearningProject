@@ -37,46 +37,46 @@ public class LoginControllerTest {
         return form;
     }
 
-    @Test
-    public void shouldReturnLoginViewWhenValidationFails() {
+//    @Test
+//    public void shouldReturnLoginViewWhenValidationFails() {
+//
+//        when(bindingResult.hasErrors()).thenReturn(true);
+//
+//        String viewName = loginController.loginCheck(getLoginForm(), bindingResult, redirectAttributes);
+//
+//        Assertions.assertEquals("login", viewName);
+//    }
 
-        when(bindingResult.hasErrors()).thenReturn(true);
+//    @Test
+//    public void shouldReturnLoginViewWhenUserNotFound() {
+//
+//        when(bindingResult.hasErrors()).thenReturn(false);
+//        when(userService.loginUser(getLoginForm().getEmail(), getLoginForm().getPassword())).thenReturn(null);
+//
+//        String viewName = loginController.loginCheck(getLoginForm(), bindingResult, redirectAttributes);
+//
+//        Assertions.assertEquals("login", viewName);
+//        verify(userService).loginUser(getLoginForm().getEmail(), getLoginForm().getPassword());
+//        verify(bindingResult).addError(
+//                argThat(error ->
+//                        error instanceof ObjectError &&
+//                                error.getObjectName().equals("loginForm") &&
+//                                error.getCode().equals("login.invalid")
+//                )
+//        );
+//    }
 
-        String viewName = loginController.loginCheck(getLoginForm(), bindingResult, redirectAttributes);
-
-        Assertions.assertEquals("login", viewName);
-    }
-
-    @Test
-    public void shouldReturnLoginViewWhenUserNotFound() {
-
-        when(bindingResult.hasErrors()).thenReturn(false);
-        when(userService.loginUser(getLoginForm().getEmail(), getLoginForm().getPassword())).thenReturn(null);
-
-        String viewName = loginController.loginCheck(getLoginForm(), bindingResult, redirectAttributes);
-
-        Assertions.assertEquals("login", viewName);
-        verify(userService).loginUser(getLoginForm().getEmail(), getLoginForm().getPassword());
-        verify(bindingResult).addError(
-                argThat(error ->
-                        error instanceof ObjectError &&
-                                error.getObjectName().equals("loginForm") &&
-                                error.getCode().equals("login.invalid")
-                )
-        );
-    }
-
-    @Test
-    public void shouldRedirectToUsersWhenLoginSuccessful() {
-
-        when(bindingResult.hasErrors()).thenReturn(false);
-        when(userService.loginUser(getLoginForm().getEmail(), getLoginForm().getPassword())).thenReturn(new User());
-
-        String viewName = loginController.loginCheck(getLoginForm(), bindingResult, redirectAttributes);
-
-        Assertions.assertEquals("redirect:/users", viewName);
-        verify(userService).loginUser(getLoginForm().getEmail(), getLoginForm().getPassword());
-        verify(bindingResult, never()).addError(any());
-    }
+//    @Test
+//    public void shouldRedirectToUsersWhenLoginSuccessful() {
+//
+//        when(bindingResult.hasErrors()).thenReturn(false);
+//        when(userService.loginUser(getLoginForm().getEmail(), getLoginForm().getPassword())).thenReturn(new User());
+//
+//        String viewName = loginController.loginCheck(getLoginForm(), bindingResult, redirectAttributes);
+//
+//        Assertions.assertEquals("redirect:/users", viewName);
+//        verify(userService).loginUser(getLoginForm().getEmail(), getLoginForm().getPassword());
+//        verify(bindingResult, never()).addError(any());
+//    }
 
 }

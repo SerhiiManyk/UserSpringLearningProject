@@ -17,7 +17,8 @@
 
 
     <!-- [NEW] Standard HTML form for Spring Security -->
-    <form method="post" action="<c:url value='/login'/>" class="form-horizontal">
+    <form method="post" action="${pageContext.request.contextPath}/login">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
         <!-- EMAIL -->
         <div class="row">
