@@ -1,8 +1,7 @@
-package com.manser.pr.service.impl;
+package com.manser.pr.service;
 
 import com.manser.pr.dao.UserDao;
 import com.manser.pr.domain.User;
-import com.manser.pr.domain.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,7 +15,9 @@ import java.util.Collections;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserDao userDao;
+    private UserDao userDao;
+
+    public CustomUserDetailsService() {}
 
     @Autowired
     public CustomUserDetailsService(UserDao userDao) {
