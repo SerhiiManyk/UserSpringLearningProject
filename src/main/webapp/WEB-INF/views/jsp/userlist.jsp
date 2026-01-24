@@ -92,12 +92,15 @@
         </table>
     </div>
 
-    <!-- Add New User: доступне тільки для ADMIN -->
-    <sec:authorize access="hasRole('ROLE_ADMINISTRATOR')">
-        <div class="well">
-            <a href="<c:url value='/newuser'/>" class="btn btn-primary btn-sm">Add New User</a>
-        </div>
-    </sec:authorize>
+           <div class="clearfix" style="margin-bottom: 15px; padding-top:5px;">
+
+      <!-- Add New User: тільки для ADMIN -->
+      <sec:authorize access="hasRole('ROLE_ADMINISTRATOR')">
+          <a href="<c:url value='/newuser'/>"
+             class="btn btn-primary btn-sm pull-left">
+              Add New User
+          </a>
+      </sec:authorize>
 
                    <!-- Панель пошуку -->
                    <form method="get" action="<c:url value='/users/search'/>" class="pull-right form-inline">
