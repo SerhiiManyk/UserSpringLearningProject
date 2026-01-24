@@ -29,19 +29,4 @@ public class LoginController {
         return "login";
     }
 
-//    @PostMapping("/login")
-//    public String loginCheck(@Valid LoginForm loginForm,
-//                             BindingResult result,
-//                             RedirectAttributes redirectAttributes) {
-//        if (result.hasErrors()) {
-//            return "login";
-//        }
-//        User user = userService.loginUser(loginForm.getEmail(), loginForm.getPassword());
-//        if (user == null) {
-//            result.reject("login.invalid");
-//            return "login";
-//        }else {
-//            return "redirect:/users";
-//        }
-//    }
 }
