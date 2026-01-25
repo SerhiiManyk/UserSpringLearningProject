@@ -3,6 +3,7 @@ package com.manser.pr.dao.impl;
 import com.manser.pr.dao.TaskDao;
 import com.manser.pr.domain.Task;
 import com.manser.pr.domain.User;
+import com.manser.pr.exception.TaskDeleteException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
@@ -26,7 +27,13 @@ public class TaskDaoImpl implements TaskDao {
 
     @Override
     public List<Task> findByOwner(User owner) {
-        return List.of();
+        return getSession()
+                .createQuery(
+                        "FROM Task t WHERE t.owner = :owner",
+                        Task.class
+                )
+                .setParameter("owner", owner)
+                .getResultList();
     }
 
     @Override
@@ -43,7 +50,12 @@ public class TaskDaoImpl implements TaskDao {
 
     @Override
     public void delete(Task entity) {
-
+        try {
+            getSession().delete(entity);
+        } catch (Exception e) {
+            throw new TaskDeleteException(
+                    "Cannot delete task. It may be used by other records.", e);
+        }
     }
 
     @Override
