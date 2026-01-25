@@ -48,7 +48,7 @@ public class TaskDaoImpl implements TaskDao {
 
     @Override
     public Task getById(Long id) {
-        return null;
+        return getSession().get(Task.class, id);
     }
 
     @Override
