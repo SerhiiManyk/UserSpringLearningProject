@@ -4,7 +4,9 @@ import com.manser.pr.dao.TaskDao;
 import com.manser.pr.dao.UserDao;
 import com.manser.pr.domain.Task;
 import com.manser.pr.domain.User;
+import com.manser.pr.domain.UserRole;
 import com.manser.pr.service.TaskService;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,6 +39,7 @@ public class TaskServiceImpl implements TaskService {
     public Task createTask(Task task) {
         SecurityContext context = SecurityContextHolder.getContext();
         UserDetails userDetails = (UserDetails) context.getAuthentication().getPrincipal();
+
         String email = userDetails.getUsername();
         User currentUser = userDao.getByEmail(email);
         task.setOwner(currentUser);
@@ -50,7 +53,25 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task updateTask(Task task) {
-        return null;
+        SecurityContext context = SecurityContextHolder.getContext();
+        UserDetails userDetails = (UserDetails) context.getAuthentication().getPrincipal();
+
+        String email = userDetails.getUsername();
+        User currentUser = userDao.getByEmail(email);
+
+        Task existTask = taskDao.getById(task.getId());
+
+        if(existTask.getOwner().getId().equals(currentUser.getId()) || currentUser.getUserRole() == UserRole.ADMINISTRATOR){
+            existTask.setTitle(task.getTitle());
+            existTask.setDescription(task.getDescription());
+            existTask.setStatus(task.getStatus());
+            existTask.setPriority(task.getPriority());
+
+            taskDao.update(existTask);
+        }else {
+            throw new AccessDeniedException("You are not allowed to update this task");
+        }
+        return existTask;
     }
 
     @Override
