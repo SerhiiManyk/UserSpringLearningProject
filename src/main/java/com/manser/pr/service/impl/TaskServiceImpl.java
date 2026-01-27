@@ -24,6 +24,13 @@ public class TaskServiceImpl implements TaskService {
         this.userDao = userDao;
     }
 
+    private User getCurrentUser() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        UserDetails userDetails = (UserDetails) context.getAuthentication().getPrincipal();
+        String email = userDetails.getUsername();
+        return userDao.getByEmail(email);
+    }
+
 
     @Override
     public List<Task> findAllUserTasks() {
@@ -37,11 +44,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task createTask(Task task) {
-        SecurityContext context = SecurityContextHolder.getContext();
-        UserDetails userDetails = (UserDetails) context.getAuthentication().getPrincipal();
 
-        String email = userDetails.getUsername();
-        User currentUser = userDao.getByEmail(email);
+        User currentUser = getCurrentUser();
         task.setOwner(currentUser);
 
         Objects.requireNonNull(task.getStatus(), "Task status must not be null");
@@ -53,11 +57,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task updateTask(Task task) {
-        SecurityContext context = SecurityContextHolder.getContext();
-        UserDetails userDetails = (UserDetails) context.getAuthentication().getPrincipal();
 
-        String email = userDetails.getUsername();
-        User currentUser = userDao.getByEmail(email);
+        User currentUser = getCurrentUser();
 
         Task existTask = taskDao.getById(task.getId());
 
