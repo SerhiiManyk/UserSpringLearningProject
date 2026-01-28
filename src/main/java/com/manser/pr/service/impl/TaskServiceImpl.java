@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,7 +58,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task updateTask(Task task) {
-
         User currentUser = getCurrentUser();
 
         Task existTask = taskDao.getById(task.getId());
@@ -77,7 +77,17 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void deleteTaskById(Long id) {
+        User currentUser = getCurrentUser();
 
+        Task task = taskDao.getById(id);
+        if(task == null){
+            throw new EntityNotFoundException("Task with id " + id + " does not exist");
+        }
+        if(task.getOwner().getId().equals(currentUser.getId()) || currentUser.getUserRole() == UserRole.ADMINISTRATOR){
+            taskDao.delete(task);
+        }else{
+            throw new AccessDeniedException("You are not allowed to delete this task");
+        }
     }
 
     @Override
