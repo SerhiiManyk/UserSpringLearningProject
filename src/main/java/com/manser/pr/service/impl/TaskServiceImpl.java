@@ -62,14 +62,14 @@ public class TaskServiceImpl implements TaskService {
 
         Task existTask = taskDao.getById(task.getId());
 
-        if(existTask.getOwner().getId().equals(currentUser.getId()) || currentUser.getUserRole() == UserRole.ADMINISTRATOR){
+        if (existTask.getOwner().getId().equals(currentUser.getId()) || currentUser.getUserRole() == UserRole.ADMINISTRATOR) {
             existTask.setTitle(task.getTitle());
             existTask.setDescription(task.getDescription());
             existTask.setStatus(task.getStatus());
             existTask.setPriority(task.getPriority());
 
             taskDao.update(existTask);
-        }else {
+        } else {
             throw new AccessDeniedException("You are not allowed to update this task");
         }
         return existTask;
@@ -80,18 +80,28 @@ public class TaskServiceImpl implements TaskService {
         User currentUser = getCurrentUser();
 
         Task task = taskDao.getById(id);
-        if(task == null){
+        if (task == null) {
             throw new EntityNotFoundException("Task with id " + id + " does not exist");
         }
-        if(task.getOwner().getId().equals(currentUser.getId()) || currentUser.getUserRole() == UserRole.ADMINISTRATOR){
+        if (task.getOwner().getId().equals(currentUser.getId()) || currentUser.getUserRole() == UserRole.ADMINISTRATOR) {
             taskDao.delete(task);
-        }else{
+        } else {
             throw new AccessDeniedException("You are not allowed to delete this task");
         }
     }
 
     @Override
     public Task getTaskForEdit(Long id) {
-        return null;
+        User currentUser = getCurrentUser();
+
+        Task task = taskDao.getById(id);
+        if (task == null) {
+            throw new EntityNotFoundException("Task with id " + id + " does not exist");
+        }
+        if (task.getOwner().getId().equals(currentUser.getId()) || currentUser.getUserRole() == UserRole.ADMINISTRATOR) {
+            return task;
+        } else {
+            throw new AccessDeniedException("You are not allowed to edit this task");
+        }
     }
 }
