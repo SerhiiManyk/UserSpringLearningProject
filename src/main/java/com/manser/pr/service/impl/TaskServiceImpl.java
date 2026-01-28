@@ -35,12 +35,18 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<Task> findAllUserTasks() {
-        return List.of();
+        User currentUser = getCurrentUser();
+        return taskDao.findByOwner(currentUser);
     }
 
     @Override
     public List<Task> findAllTasks() {
-        return List.of();
+        User currentUser = getCurrentUser();
+        if(currentUser.getUserRole() == UserRole.ADMINISTRATOR){
+            return taskDao.getAll();
+        }else {
+            throw new AccessDeniedException("Only administrators can view tasks");
+        }
     }
 
     @Override
