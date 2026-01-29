@@ -98,6 +98,18 @@ public class TaskServiceImplTest {
 
     @Test
     public void createTaskShouldThrowExceptionWhenTaskPriorityIsNull(){
+
+        Task task = new Task();
+        task.setTitle("New Task");
+        task.setStatus(TaskStatus.NEW);
+        task.setPriority(null);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            taskServiceImpl.createTask(task);
+        });
+            assertEquals("Task priority must not be null", exception.getMessage());
+
+        verify(taskDao, never()).save(any());
     }
 
     @Test
