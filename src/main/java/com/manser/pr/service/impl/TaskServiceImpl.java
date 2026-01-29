@@ -52,11 +52,18 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Task createTask(Task task) {
 
+        if (task == null) {
+            throw new IllegalArgumentException("Task must not be null");
+        }
+        if (task.getStatus() == null) {
+            throw new IllegalArgumentException("Task status must not be null");
+        }
+        if (task.getPriority() == null) {
+            throw new IllegalArgumentException("Task priority must not be null");
+        }
+
         User currentUser = getCurrentUser();
         task.setOwner(currentUser);
-
-        Objects.requireNonNull(task.getStatus(), "Task status must not be null");
-        Objects.requireNonNull(task.getPriority(), "Task priority must not be null");
 
         taskDao.save(task);
         return task;

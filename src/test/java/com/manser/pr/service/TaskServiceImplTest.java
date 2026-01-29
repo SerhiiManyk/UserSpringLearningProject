@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -81,6 +82,18 @@ public class TaskServiceImplTest {
 
     @Test
     public void createTaskShouldThrowExceptionWhenTaskStatusIsNull(){
+
+        Task task = new Task();
+        task.setTitle("New Task");
+        task.setStatus(null);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            taskServiceImpl.createTask(task);
+        });
+
+        assertEquals("Task status must not be null", exception.getMessage());
+
+        verify(taskDao, never()).save(any());
     }
 
     @Test
