@@ -54,6 +54,7 @@ public class TaskServiceImplTest {
 
         User user = new User();
         user.setEmail(email);
+        user.setId(1L);
         when(userDao.getByEmail(email)).thenReturn(user);
 
         return user;
@@ -65,6 +66,7 @@ public class TaskServiceImplTest {
         task.setDescription("Desc");
         task.setStatus(TaskStatus.NEW);
         task.setPriority(Priority.MEDIUM);
+        task.setId(10L);
         return task;
     }
 
@@ -175,9 +177,7 @@ public class TaskServiceImplTest {
     @Test
     public void updateTaskShouldUpdateTaskWhenUserIsOwner(){
         User currentUser = setupSecurityContextForUser("test@mail.com");
-        currentUser.setId(1L);
         Task task = createSampleTask();
-        task.setId(1L);
         task.setOwner(currentUser);
 
         when(taskDao.getById(1L)).thenReturn(task);
@@ -202,7 +202,6 @@ public class TaskServiceImplTest {
     public void updateTaskShouldUpdateTaskWhenUserIsAdmin(){
         User currentUser = setupSecurityContextForUser("test@mail.com");
         currentUser.setUserRole(UserRole.ADMINISTRATOR);
-        currentUser.setId(100L);
 
         User taskOwner = new User();
         taskOwner.setEmail("owner@mail.com");
@@ -210,7 +209,6 @@ public class TaskServiceImplTest {
 
         Task  task = createSampleTask();
         task.setOwner(taskOwner);
-        task.setId(1L);
 
         Task taskToUpdate = createSampleTask();
         taskToUpdate.setId(1L);
