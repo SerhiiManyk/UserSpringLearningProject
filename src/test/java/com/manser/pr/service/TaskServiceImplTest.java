@@ -174,10 +174,57 @@ public class TaskServiceImplTest {
 
     @Test
     public void updateTaskShouldUpdateTaskWhenUserIsOwner(){
+        User currentUser = setupSecurityContextForUser("test@mail.com");
+        currentUser.setId(1L);
+        Task task = createSampleTask();
+        task.setId(1L);
+        task.setOwner(currentUser);
+
+        when(taskDao.getById(1L)).thenReturn(task);
+        when(taskDao.update(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Task updatedData = new Task();
+        updatedData.setId(1L);
+        updatedData.setTitle("Title 2");
+        updatedData.setStatus(TaskStatus.IN_PROGRESS);
+        updatedData.setPriority(task.getPriority());
+
+        Task result = taskServiceImpl.updateTask(updatedData);
+
+        assertEquals("Title 2", result.getTitle());
+        assertEquals(TaskStatus.IN_PROGRESS, result.getStatus());
+        assertEquals(currentUser, result.getOwner());
+
+        verify(taskDao).update(task);
     }
 
     @Test
     public void updateTaskShouldUpdateTaskWhenUserIsAdmin(){
+        User currentUser = setupSecurityContextForUser("test@mail.com");
+        currentUser.setUserRole(UserRole.ADMINISTRATOR);
+        currentUser.setId(100L);
+
+        User taskOwner = new User();
+        taskOwner.setEmail("owner@mail.com");
+        taskOwner.setId(200L);
+
+        Task  task = createSampleTask();
+        task.setOwner(taskOwner);
+        task.setId(1L);
+
+        Task taskToUpdate = createSampleTask();
+        taskToUpdate.setId(1L);
+        taskToUpdate.setTitle("Title 2");
+        taskToUpdate.setStatus(TaskStatus.IN_PROGRESS);
+
+        when(taskDao.getById(1L)).thenReturn(task);
+        when(taskDao.update(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Task result = taskServiceImpl.updateTask(taskToUpdate);
+
+        assertEquals(taskOwner, result.getOwner());
+        assertEquals("Title 2", result.getTitle());
+        assertEquals(TaskStatus.IN_PROGRESS, result.getStatus());
     }
 
     @Test
