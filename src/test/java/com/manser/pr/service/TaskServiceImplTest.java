@@ -18,10 +18,12 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -114,10 +116,34 @@ public class TaskServiceImplTest {
 
     @Test
     public void findAllUserTasksShouldReturnAllTasksForCurrentUser(){
+        User currentUser = setupSecurityContextForUser("test@mail.com");
+        List<Task> tasks = new ArrayList<>();
+        tasks.add(createSampleTask());
+        tasks.add(createSampleTask());
+
+        when(taskDao.findByOwner(currentUser)).thenReturn(tasks);
+
+        List<Task> resultList = taskServiceImpl.findAllUserTasks();
+
+        assertEquals(2, resultList.size());
+        assertEquals(tasks, resultList);
+
+        verify(taskDao).findByOwner(currentUser);
     }
 
     @Test
-    public void findAllUserTasksShouldThrowAccessDeniedExceptionWhenUserHasNoTasks(){
+    public void findAllUserTasksShouldReturnEmptyListWhenUserHasNoTasks() {
+
+        User currentUser = setupSecurityContextForUser("test@mail.com");
+
+        when(taskDao.findByOwner(currentUser)).thenReturn(Collections.emptyList());
+
+        List<Task> result = taskServiceImpl.findAllUserTasks();
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+
+        verify(taskDao).findByOwner(currentUser);
     }
 
     @Test
