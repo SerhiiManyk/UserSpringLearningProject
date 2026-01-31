@@ -2,10 +2,7 @@ package com.manser.pr.service;
 
 import com.manser.pr.dao.TaskDao;
 import com.manser.pr.dao.UserDao;
-import com.manser.pr.domain.Priority;
-import com.manser.pr.domain.Task;
-import com.manser.pr.domain.TaskStatus;
-import com.manser.pr.domain.User;
+import com.manser.pr.domain.*;
 import com.manser.pr.service.impl.TaskServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +15,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.nio.file.AccessDeniedException;
+import org.springframework.security.access.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -148,10 +145,31 @@ public class TaskServiceImplTest {
 
     @Test
     public void findAllTasksShouldReturnAllTasksWhenUserIsAdmin(){
+        User currentUser = setupSecurityContextForUser("test@mail.com");
+        currentUser.setUserRole(UserRole.ADMINISTRATOR);
+
+        List<Task> tasks = new ArrayList<>();
+        tasks.add(createSampleTask());
+        tasks.add(createSampleTask());
+
+        when(taskDao.getAll()).thenReturn(tasks);
+
+        List<Task> result = taskServiceImpl.findAllTasks();
+
+        assertEquals(2, result.size());
+        verify(taskDao).getAll();
     }
 
     @Test
     public void findAllTasksShouldThrowAccessDeniedExceptionWhenUserIsNotAdmin(){
+        User currentUser = setupSecurityContextForUser("test@mail.com");
+        currentUser.setUserRole(UserRole.UN_LOGIN_USER);
+
+        Exception exception = assertThrows(AccessDeniedException.class, () -> {
+            taskServiceImpl.findAllTasks();
+        });
+        assertEquals("Only administrators can view tasks", exception.getMessage());
+        verify(taskDao, never()).getAll();
     }
 
     @Test
