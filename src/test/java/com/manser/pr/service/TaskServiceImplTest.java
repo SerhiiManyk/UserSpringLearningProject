@@ -227,10 +227,41 @@ public class TaskServiceImplTest {
 
     @Test
     public void updateTaskShouldThrowAccessDeniedExceptionWhenUserIsNotOwnerAndNotAdmin(){
+        User currentUser = setupSecurityContextForUser("test@mail.com");
+        currentUser.setUserRole(UserRole.REGULAR_USER);
+
+        User taskOwner = new User();
+        taskOwner.setId(200L);
+
+        Task  task = createSampleTask();
+        task.setOwner(taskOwner);
+
+        Task taskToUpdate = createSampleTask();
+        taskToUpdate.setId(1L);
+
+        when(taskDao.getById(1L)).thenReturn(task);
+        Exception exception = assertThrows(AccessDeniedException.class, () -> {
+            taskServiceImpl.updateTask(taskToUpdate);
+        });
+        assertEquals("You are not allowed to update this task", exception.getMessage());
+        verify(taskDao, never()).update(any(Task.class));
     }
 
     @Test
     public void deleteTaskByIdShouldDeleteTaskWhenUserIsOwner(){
+        User currentUser = setupSecurityContextForUser("test@mail.com");
+        currentUser.setUserRole(UserRole.REGULAR_USER);
+        currentUser.setId(1L);
+
+        Task  task = createSampleTask();
+        task.setId(1L);
+        task.setOwner(currentUser);
+
+        when(taskDao.getById(1L)).thenReturn(task);
+
+        taskServiceImpl.deleteTaskById(1L);
+
+        verify(taskDao).delete(task);
     }
 
     @Test
