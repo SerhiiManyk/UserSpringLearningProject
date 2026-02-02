@@ -19,7 +19,6 @@ import org.springframework.security.access.AccessDeniedException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -372,9 +371,43 @@ public class TaskServiceImplTest {
 
     @Test
     public void getTaskForEditShouldThrowAccessDeniedExceptionWhenUserIsNotOwnerAndNotAdmin() {
+        User currentUser = setupSecurityContextForUser("test@mail.com");
+        currentUser.setUserRole(UserRole.REGULAR_USER);
+        currentUser.setId(1L);
+
+        User taskOwner = new User();
+        taskOwner.setId(2L);
+
+        Task task = createSampleTask();
+        task.setId(1L);
+        task.setOwner(taskOwner);
+
+        when(taskDao.getById(1L)).thenReturn(task);
+
+        AccessDeniedException exception = assertThrows(
+                AccessDeniedException.class,
+                () -> taskServiceImpl.getTaskForEdit(1L)
+        );
+
+        assertEquals("You are not allowed to edit this task", exception.getMessage());
+        verify(taskDao).getById(1L);
     }
 
     @Test
     public void getTaskForEditShouldThrowEntityNotFoundExceptionWhenTaskDoesNotExist() {
+        User currentUser = setupSecurityContextForUser("test@mail.com");
+        currentUser.setUserRole(UserRole.REGULAR_USER);
+        currentUser.setId(1L);
+
+        when(taskDao.getById(200L)).thenThrow(new EntityNotFoundException("Task with id 200 does not exist"));
+
+        EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> taskServiceImpl.getTaskForEdit(200L)
+        );
+
+        assertEquals("Task with id 200 does not exist", exception.getMessage());
+
+        verify(taskDao).getById(200L);
     }
 }
