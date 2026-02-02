@@ -16,6 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import org.springframework.security.access.AccessDeniedException;
+
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -266,14 +268,62 @@ public class TaskServiceImplTest {
 
     @Test
     public void deleteTaskByIdShouldDeleteTaskWhenUserIsAdmin(){
+        User currentUser = setupSecurityContextForUser("test@mail.com");
+        currentUser.setUserRole(UserRole.ADMINISTRATOR);
+        currentUser.setId(1L);
+
+        User taskOwner = new User();
+        taskOwner.setId(2L);
+
+        Task  task = createSampleTask();
+        task.setId(1L);
+        task.setOwner(taskOwner);
+
+        when(taskDao.getById(1L)).thenReturn(task);
+
+        taskServiceImpl.deleteTaskById(1L);
+
+        verify(taskDao).delete(task);
     }
 
     @Test
     public void deleteTaskByIdShouldThrowAccessDeniedExceptionWhenUserIsNotOwnerAndNotAdmin(){
+        User currentUser = setupSecurityContextForUser("test@mail.com");
+        currentUser.setUserRole(UserRole.REGULAR_USER);
+        currentUser.setId(1L);
+
+        User taskOwner = new User();
+        taskOwner.setId(2L);
+
+        Task  task = createSampleTask();
+        task.setId(1L);
+        task.setOwner(taskOwner);
+
+        when(taskDao.getById(1L)).thenReturn(task);
+
+        Exception exception = assertThrows(AccessDeniedException.class, () -> {
+            taskServiceImpl.deleteTaskById(1L);
+        });
+
+        assertEquals("You are not allowed to delete this task", exception.getMessage());
+        verify(taskDao, never()).delete(any(Task.class));
     }
 
     @Test
     public void deleteTaskByIdShouldThrowEntityNotFoundExceptionWhenTaskDoesNotExist(){
+        User currentUser = setupSecurityContextForUser("test@mail.com");
+        currentUser.setUserRole(UserRole.REGULAR_USER);
+        currentUser.setId(1L);
+
+        when(taskDao.getById(200L)).thenThrow(new EntityNotFoundException("Task with id 200 does not exist"));
+
+        EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> taskServiceImpl.deleteTaskById(200L)
+        );
+        assertEquals("Task with id 200 does not exist", exception.getMessage());
+
+        verify(taskDao, never()).delete(any(Task.class));
     }
 
     @Test
