@@ -19,6 +19,7 @@ import org.springframework.security.access.AccessDeniedException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class TaskServiceImplTest {
         SecurityContextHolder.clearContext();
     }
 
-    private User setupSecurityContextForUser(String email){
+    private User setupSecurityContextForUser(String email) {
         UserDetails userDetails = mock(UserDetails.class);
         when(userDetails.getUsername()).thenReturn(email);
 
@@ -73,7 +74,7 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void createTaskShouldCreateTaskAndAssignCurrentUserAsOwner(){
+    public void createTaskShouldCreateTaskAndAssignCurrentUserAsOwner() {
         User currentUser = setupSecurityContextForUser("test@mail.com");
         Task task = createSampleTask();
 
@@ -84,7 +85,7 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void createTaskShouldThrowExceptionWhenTaskStatusIsNull(){
+    public void createTaskShouldThrowExceptionWhenTaskStatusIsNull() {
 
         Task task = new Task();
         task.setTitle("New Task");
@@ -100,7 +101,7 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void createTaskShouldThrowExceptionWhenTaskPriorityIsNull(){
+    public void createTaskShouldThrowExceptionWhenTaskPriorityIsNull() {
 
         Task task = new Task();
         task.setTitle("New Task");
@@ -110,13 +111,13 @@ public class TaskServiceImplTest {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             taskServiceImpl.createTask(task);
         });
-            assertEquals("Task priority must not be null", exception.getMessage());
+        assertEquals("Task priority must not be null", exception.getMessage());
 
         verify(taskDao, never()).save(any());
     }
 
     @Test
-    public void findAllUserTasksShouldReturnAllTasksForCurrentUser(){
+    public void findAllUserTasksShouldReturnAllTasksForCurrentUser() {
         User currentUser = setupSecurityContextForUser("test@mail.com");
         List<Task> tasks = new ArrayList<>();
         tasks.add(createSampleTask());
@@ -148,7 +149,7 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void findAllTasksShouldReturnAllTasksWhenUserIsAdmin(){
+    public void findAllTasksShouldReturnAllTasksWhenUserIsAdmin() {
         User currentUser = setupSecurityContextForUser("test@mail.com");
         currentUser.setUserRole(UserRole.ADMINISTRATOR);
 
@@ -165,7 +166,7 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void findAllTasksShouldThrowAccessDeniedExceptionWhenUserIsNotAdmin(){
+    public void findAllTasksShouldThrowAccessDeniedExceptionWhenUserIsNotAdmin() {
         User currentUser = setupSecurityContextForUser("test@mail.com");
         currentUser.setUserRole(UserRole.UN_LOGIN_USER);
 
@@ -177,7 +178,7 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void updateTaskShouldUpdateTaskWhenUserIsOwner(){
+    public void updateTaskShouldUpdateTaskWhenUserIsOwner() {
         User currentUser = setupSecurityContextForUser("test@mail.com");
         Task task = createSampleTask();
         task.setOwner(currentUser);
@@ -201,7 +202,7 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void updateTaskShouldUpdateTaskWhenUserIsAdmin(){
+    public void updateTaskShouldUpdateTaskWhenUserIsAdmin() {
         User currentUser = setupSecurityContextForUser("test@mail.com");
         currentUser.setUserRole(UserRole.ADMINISTRATOR);
 
@@ -209,7 +210,7 @@ public class TaskServiceImplTest {
         taskOwner.setEmail("owner@mail.com");
         taskOwner.setId(200L);
 
-        Task  task = createSampleTask();
+        Task task = createSampleTask();
         task.setOwner(taskOwner);
 
         Task taskToUpdate = createSampleTask();
@@ -228,14 +229,14 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void updateTaskShouldThrowAccessDeniedExceptionWhenUserIsNotOwnerAndNotAdmin(){
+    public void updateTaskShouldThrowAccessDeniedExceptionWhenUserIsNotOwnerAndNotAdmin() {
         User currentUser = setupSecurityContextForUser("test@mail.com");
         currentUser.setUserRole(UserRole.REGULAR_USER);
 
         User taskOwner = new User();
         taskOwner.setId(200L);
 
-        Task  task = createSampleTask();
+        Task task = createSampleTask();
         task.setOwner(taskOwner);
 
         Task taskToUpdate = createSampleTask();
@@ -250,12 +251,12 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void deleteTaskByIdShouldDeleteTaskWhenUserIsOwner(){
+    public void deleteTaskByIdShouldDeleteTaskWhenUserIsOwner() {
         User currentUser = setupSecurityContextForUser("test@mail.com");
         currentUser.setUserRole(UserRole.REGULAR_USER);
         currentUser.setId(1L);
 
-        Task  task = createSampleTask();
+        Task task = createSampleTask();
         task.setId(1L);
         task.setOwner(currentUser);
 
@@ -267,7 +268,7 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void deleteTaskByIdShouldDeleteTaskWhenUserIsAdmin(){
+    public void deleteTaskByIdShouldDeleteTaskWhenUserIsAdmin() {
         User currentUser = setupSecurityContextForUser("test@mail.com");
         currentUser.setUserRole(UserRole.ADMINISTRATOR);
         currentUser.setId(1L);
@@ -275,7 +276,7 @@ public class TaskServiceImplTest {
         User taskOwner = new User();
         taskOwner.setId(2L);
 
-        Task  task = createSampleTask();
+        Task task = createSampleTask();
         task.setId(1L);
         task.setOwner(taskOwner);
 
@@ -287,7 +288,7 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void deleteTaskByIdShouldThrowAccessDeniedExceptionWhenUserIsNotOwnerAndNotAdmin(){
+    public void deleteTaskByIdShouldThrowAccessDeniedExceptionWhenUserIsNotOwnerAndNotAdmin() {
         User currentUser = setupSecurityContextForUser("test@mail.com");
         currentUser.setUserRole(UserRole.REGULAR_USER);
         currentUser.setId(1L);
@@ -295,7 +296,7 @@ public class TaskServiceImplTest {
         User taskOwner = new User();
         taskOwner.setId(2L);
 
-        Task  task = createSampleTask();
+        Task task = createSampleTask();
         task.setId(1L);
         task.setOwner(taskOwner);
 
@@ -310,7 +311,7 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void deleteTaskByIdShouldThrowEntityNotFoundExceptionWhenTaskDoesNotExist(){
+    public void deleteTaskByIdShouldThrowEntityNotFoundExceptionWhenTaskDoesNotExist() {
         User currentUser = setupSecurityContextForUser("test@mail.com");
         currentUser.setUserRole(UserRole.REGULAR_USER);
         currentUser.setId(1L);
@@ -327,18 +328,53 @@ public class TaskServiceImplTest {
     }
 
     @Test
-    public void getTaskForEditShouldReturnTaskForEditWhenUserIsOwner(){
+    public void getTaskForEditShouldReturnTaskForEditWhenUserIsOwner() {
+        User currentUser = setupSecurityContextForUser("test@mail.com");
+        currentUser.setUserRole(UserRole.REGULAR_USER);
+        currentUser.setId(1L);
+
+        Task task = createSampleTask();
+        task.setId(1L);
+        task.setOwner(currentUser);
+
+        when(taskDao.getById(1L)).thenReturn(task);
+
+        Task result = taskServiceImpl.getTaskForEdit(1L);
+
+        assertEquals(task, result);
+        assertEquals(1L, result.getId());
+        assertEquals(currentUser, result.getOwner());
+        verify(taskDao).getById(1L);
     }
 
     @Test
-    public void getTaskForEditShouldReturnTaskForEditWhenUserIsAdmin(){
+    public void getTaskForEditShouldReturnTaskForEditWhenUserIsAdmin() {
+        User currentUser = setupSecurityContextForUser("test@mail.com");
+        currentUser.setUserRole(UserRole.ADMINISTRATOR);
+        currentUser.setId(1L);
+
+        User taskOwner = new User();
+        taskOwner.setId(2L);
+
+        Task task = createSampleTask();
+        task.setId(1L);
+        task.setOwner(taskOwner);
+
+        when(taskDao.getById(1L)).thenReturn(task);
+
+        Task result = taskServiceImpl.getTaskForEdit(1L);
+
+        assertEquals(task, result);
+        assertEquals(1L, result.getId());
+        assertEquals(taskOwner, result.getOwner());
+        verify(taskDao).getById(1L);
     }
 
     @Test
-    public void getTaskForEditShouldThrowAccessDeniedExceptionWhenUserIsNotOwnerAndNotAdmin(){
+    public void getTaskForEditShouldThrowAccessDeniedExceptionWhenUserIsNotOwnerAndNotAdmin() {
     }
 
     @Test
-    public void getTaskForEditShouldThrowEntityNotFoundExceptionWhenTaskDoesNotExist(){
+    public void getTaskForEditShouldThrowEntityNotFoundExceptionWhenTaskDoesNotExist() {
     }
 }
