@@ -18,4 +18,6 @@ public interface TaskService {
 
     Task getTaskForEdit(Long id);
 
+    boolean taskExistsForCurrentUser(String title);
+
 }

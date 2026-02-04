@@ -37,6 +37,19 @@ public class TaskDaoImpl implements TaskDao {
     }
 
     @Override
+    public boolean existsByTitleAndOwner(String title, User owner) {
+        return !getSession()
+                .createQuery(
+                        "select 1 from Task t where t.owner = :owner and t.title = :title"
+                )
+                .setParameter("owner", owner)
+                .setParameter("title", title)
+                .setMaxResults(1)
+                .getResultList()
+                .isEmpty();
+    }
+
+    @Override
     public Long save(Task entity) {
         getSession().save(entity);
         return entity.getId();

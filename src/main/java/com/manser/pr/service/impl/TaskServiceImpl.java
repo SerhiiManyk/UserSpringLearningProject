@@ -5,6 +5,7 @@ import com.manser.pr.dao.UserDao;
 import com.manser.pr.domain.Task;
 import com.manser.pr.domain.User;
 import com.manser.pr.domain.UserRole;
+import com.manser.pr.exception.TaskAlreadyExistException;
 import com.manser.pr.service.TaskService;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContext;
@@ -51,9 +52,11 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task createTask(Task task) {
-
         if (task == null) {
             throw new IllegalArgumentException("Task must not be null");
+        }
+        if (task.getTitle() == null || task.getTitle().isBlank()) {
+            throw new IllegalArgumentException("Task title must not be null or blank");
         }
         if (task.getStatus() == null) {
             throw new IllegalArgumentException("Task status must not be null");
@@ -63,6 +66,10 @@ public class TaskServiceImpl implements TaskService {
         }
 
         User currentUser = getCurrentUser();
+
+        if (taskDao.existsByTitleAndOwner(task.getTitle(), currentUser)) {
+            throw new TaskAlreadyExistException("Task with this title already exists");
+        }
         task.setOwner(currentUser);
 
         taskDao.save(task);
@@ -116,5 +123,10 @@ public class TaskServiceImpl implements TaskService {
         } else {
             throw new AccessDeniedException("You are not allowed to edit this task");
         }
+    }
+
+    @Override
+    public boolean taskExistsForCurrentUser(String title) {
+        return taskDao.existsByTitleAndOwner(title, getCurrentUser());
     }
 }
