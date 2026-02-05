@@ -3,7 +3,6 @@ package com.manser.pr.controller;
 import com.manser.pr.domain.Task;
 import com.manser.pr.domain.User;
 import com.manser.pr.exception.TaskAlreadyExistException;
-import com.manser.pr.exception.UserAlreadyExistsException;
 import com.manser.pr.service.TaskService;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
@@ -94,4 +93,28 @@ public class TaskController {
         );
         return "redirect:/tasks";
     }
+
+    @PostMapping("/delete-task-{id}")
+    public String deleteTask(@PathVariable Long id,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            taskService.deleteTaskById(id);
+            redirectAttributes.addFlashAttribute(
+                    "success",
+                    "Task deleted successfully"
+            );
+        } catch (EntityNotFoundException e) {
+            return "redirect:/tasks";
+        } catch (AccessDeniedException e) {
+            return "redirect:/access-denied";
+        }
+        return "redirect:/tasks";
+    }
+
+    @GetMapping("/access-denied")
+    public String accessDenied(Model model) {
+        model.addAttribute("message", "You do not have permission to access this page.");
+        return "access-denied";
+    }
 }
+
