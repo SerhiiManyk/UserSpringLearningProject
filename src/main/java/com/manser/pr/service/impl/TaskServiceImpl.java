@@ -82,17 +82,25 @@ public class TaskServiceImpl implements TaskService {
 
         Task existTask = taskDao.getById(task.getId());
 
-        if (existTask.getOwner().getId().equals(currentUser.getId()) || currentUser.getUserRole() == UserRole.ADMINISTRATOR) {
+        if (!existTask.getOwner().getId().equals(currentUser.getId()) || currentUser.getUserRole() == UserRole.ADMINISTRATOR) {
+            throw new AccessDeniedException("You are not allowed to update this task");
+        }
+
+        boolean titleExists = taskDao.existsByTitleAndOwnerExcludingId(
+                task.getTitle(),
+                existTask.getOwner(),
+                task.getId()
+        );
+
+        if (titleExists) {
+            throw new TaskAlreadyExistException("Task with this title already exists");
+        }
             existTask.setTitle(task.getTitle());
             existTask.setDescription(task.getDescription());
             existTask.setStatus(task.getStatus());
             existTask.setPriority(task.getPriority());
 
-            taskDao.update(existTask);
-        } else {
-            throw new AccessDeniedException("You are not allowed to update this task");
-        }
-        return existTask;
+          return   taskDao.update(existTask);
     }
 
     @Override

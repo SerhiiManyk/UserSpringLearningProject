@@ -50,6 +50,24 @@ public class TaskDaoImpl implements TaskDao {
     }
 
     @Override
+    public boolean existsByTitleAndOwnerExcludingId(String title, User owner, Long taskId) {
+        Long count = getSession()
+                .createQuery(
+                        "select count(t) from Task t " +
+                                "where t.owner = :owner " +
+                                "and t.title = :title " +
+                                "and t.id <> :taskId",
+                        Long.class
+                )
+                .setParameter("owner", owner)
+                .setParameter("title", title)
+                .setParameter("taskId", taskId)
+                .uniqueResult();
+
+        return count != null && count > 0;
+    }
+
+    @Override
     public Long save(Task entity) {
         getSession().save(entity);
         return entity.getId();

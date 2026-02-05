@@ -11,4 +11,6 @@ public interface TaskDao extends CrudDao<Task>{
 
     boolean existsByTitleAndOwner(String title, User owner);
 
+    boolean existsByTitleAndOwnerExcludingId(String title, User owner, Long taskId);
+
 }
