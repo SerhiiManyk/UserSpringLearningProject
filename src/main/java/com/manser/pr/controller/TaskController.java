@@ -42,10 +42,10 @@ public class TaskController {
         try {
             taskService.createTask(task);
         } catch (TaskAlreadyExistException e) {
-            result.rejectValue("title", "task.exists");
+            result.rejectValue("title", "task.exists", e.getMessage());
             return "taskCreating";
         } catch (IllegalArgumentException e) {
-            result.reject("task.invalid");
+            result.reject("task.invalid", e.getMessage());
             return "taskCreating";
         }
         return "redirect:/taskSuccess";
@@ -112,9 +112,14 @@ public class TaskController {
     }
 
     @GetMapping("/access-denied")
-    public String accessDenied(Model model) {
-        model.addAttribute("message", "You do not have permission to access this page.");
-        return "access-denied";
+    public String accessDenied(RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute(
+                "alertMessage",
+                "You do not have permission to perform this action."
+        );
+        redirectAttributes.addFlashAttribute("backUrl", "/tasks");
+        redirectAttributes.addFlashAttribute("backLabel", "Back to tasks");
+        return "redirect:/successfull";
     }
 }
 
