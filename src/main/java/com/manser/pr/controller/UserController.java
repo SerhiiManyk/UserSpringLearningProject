@@ -79,7 +79,8 @@ public class UserController {
     }
 
     @PostMapping("/edit-user-{id}")
-    public String updateUser(@Valid User user,
+    public String updateUser(@PathVariable Long id,
+                             @Valid User user,
                              BindingResult result,
                              RedirectAttributes redirectAttributes,
                              Model model) {
@@ -87,6 +88,7 @@ public class UserController {
             model.addAttribute("edit", true);
             return "registration";
         }
+        user.setId(id);
         try {
             userService.checkEmailUnique(user);
             userService.update(user);

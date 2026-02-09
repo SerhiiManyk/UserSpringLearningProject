@@ -208,10 +208,11 @@ public class UserControllerTest {
     @Test
     public void shouldReturnRegistrationViewWhenUpdateValidationFails() {
         User testUser = createUser();
+        Long id = 1L;
 
         when(bindingResult.hasErrors()).thenReturn(true);
 
-        String viewName = userController.updateUser(testUser, bindingResult, redirectAttributes, model);
+        String viewName = userController.updateUser(id,testUser, bindingResult, redirectAttributes, model);
 
         Assertions.assertEquals("registration", viewName);
         verify(userService, never()).update(any());
@@ -220,23 +221,30 @@ public class UserControllerTest {
     @Test
     public void shouldUpdateUserWhenValid() {
         User testUser = createUser();
+        Long id = 1L;
 
         when(bindingResult.hasErrors()).thenReturn(false);
 
-        String viewName = userController.updateUser(testUser, bindingResult, redirectAttributes, model);
+        String viewName = userController.updateUser(id,testUser, bindingResult, redirectAttributes, model);
+
 
         Assertions.assertEquals("redirect:/registrationsuccess", viewName);
-        verify(userService, times(1)).update(testUser);
-        verify(redirectAttributes).addFlashAttribute(eq("success"), eq("User Petro updated successfully"));
+
+        verify(userService).update(testUser);
+        Assertions.assertEquals(id, testUser.getId());
+
+        verify(redirectAttributes)
+                .addFlashAttribute("success", "User Petro updated successfully");
     }
 
     @Test
     public void shouldRedirectToSuccessAfterUpdating() {
         User testUser = createUser();
+        Long id = 1L;
 
         when(bindingResult.hasErrors()).thenReturn(false);
 
-        String viewName = userController.updateUser(testUser, bindingResult, redirectAttributes, model);
+        String viewName = userController.updateUser(id,testUser, bindingResult, redirectAttributes, model);
 
         Assertions.assertEquals("redirect:/registrationsuccess", viewName);
         verify(redirectAttributes).addFlashAttribute(eq("success"), eq("User Petro updated successfully"));
@@ -245,10 +253,11 @@ public class UserControllerTest {
     @Test
     public void shouldAddSuccessFlashMessageOnUpdate() {
         User testUser = createUser();
+        Long id = 1L;
 
         when(bindingResult.hasErrors()).thenReturn(false);
 
-        String viewName = userController.updateUser(testUser, bindingResult, redirectAttributes, model);
+        String viewName = userController.updateUser(id,testUser, bindingResult, redirectAttributes, model);
 
         verify(redirectAttributes).addFlashAttribute(eq("success"), eq("User Petro updated successfully"));
     }
