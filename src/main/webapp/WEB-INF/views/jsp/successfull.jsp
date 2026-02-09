@@ -5,20 +5,20 @@
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>User Registration Error Page</title>
+	<title>Universal Error Page</title>
     <link rel="stylesheet" href="<c:url value='/resources/static/css/bootstrap.css'/>">
     <link rel="stylesheet" href="<c:url value='/resources/static/css/app.css'/>">
 </head>
 <body>
 <div class="generic-container">
-    <c:if test="${not empty registrationfail}">
+    <c:if test="${not empty alertMessage}">
         <div class="alert alert-danger lead">
-            ${registrationfail}
+            ${alertMessage}
         </div>
     </c:if>
 
 	<span class="well floatRight">
-		Go to <a href="<c:url value='/newuser'/>" class="btn btn-primary custom-width">Come Back</a>
+		Go to <a href="<c:url value='${backUrl}'/>" class="btn btn-primary custom-width">${backLabel}</a>
 	</span>
 </div>
 </body>

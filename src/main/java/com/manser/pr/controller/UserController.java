@@ -50,10 +50,17 @@ public class UserController {
             userService.checkEmailUnique(user);
             userService.save(user);
         } catch (UserAlreadyExistsException e) {
-            redirectAttributes.addFlashAttribute("registrationfail", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertMessage", e.getMessage());
+            redirectAttributes.addFlashAttribute("backUrl", "/newuser");
+            redirectAttributes.addFlashAttribute("backLabel", "Back to registration");
             return "redirect:/successfull";
         } catch (Exception j) {
-            redirectAttributes.addFlashAttribute("registrationfail", "WRONG REGISTRATION " + j.getMessage());
+            redirectAttributes.addFlashAttribute(
+                    "alertMessage",
+                    "Registration failed: " + j.getMessage()
+            );
+            redirectAttributes.addFlashAttribute("backUrl", "/newuser");
+            redirectAttributes.addFlashAttribute("backLabel", "Back");
             return "redirect:/successfull";
         }
         redirectAttributes.addFlashAttribute("success", "User " + user.getName() + " registered successfully");
@@ -84,10 +91,17 @@ public class UserController {
             userService.checkEmailUnique(user);
             userService.update(user);
         } catch (UserAlreadyExistsException e) {
-            redirectAttributes.addFlashAttribute("registrationfail", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertMessage", e.getMessage());
+            redirectAttributes.addFlashAttribute("backUrl", "/edit-user-" + user.getId());
+            redirectAttributes.addFlashAttribute("backLabel", "Back to edit");
             return "redirect:/successfull";
         } catch (Exception j) {
-            redirectAttributes.addFlashAttribute("registrationfail", "WRONG UPDATE : " + j.getMessage());
+            redirectAttributes.addFlashAttribute(
+                    "alertMessage",
+                    "Update failed: " + j.getMessage()
+            );
+            redirectAttributes.addFlashAttribute("backUrl", "/users");
+            redirectAttributes.addFlashAttribute("backLabel", "Back to users");
             return "redirect:/successfull";
         }
         redirectAttributes.addFlashAttribute("success", "User " + user.getName() + " updated successfully");
@@ -123,7 +137,12 @@ public class UserController {
         try {
             model.addAttribute("users", userService.getAllSorted(sortField, sortOrder));
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("registrationfail", "SOMTHING WRONG : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(
+                    "alertMessage",
+                    "Unable to load users: " + e.getMessage()
+            );
+            redirectAttributes.addFlashAttribute("backUrl", "/");
+            redirectAttributes.addFlashAttribute("backLabel", "Home");
             return "redirect:/successfull";
         }
         return "userlist";
@@ -142,7 +161,7 @@ public class UserController {
             if (resultList.isEmpty()) {
                 model.addAttribute("infoMessage", "No results found");
             }
-        }catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             model.addAttribute("users", List.of());
             model.addAttribute("infoMessage", e.getMessage());
         }
