@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "TASKS")
@@ -141,6 +142,25 @@ public class Task {
 
     public void setPriority(Priority priority) {
         this.priority = priority;
+    }
+
+
+    public String getCreatedAtFormatted() {
+        return createdAt != null
+                ? createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+                : "";
+    }
+
+    public String getUpdatedAtFormatted() {
+        return updatedAt != null
+                ? updatedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+                : "";
+    }
+
+    public String getDeadlineFormatted() {
+        return deadline != null
+                ? deadline.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                : "";
     }
 
     @Override
