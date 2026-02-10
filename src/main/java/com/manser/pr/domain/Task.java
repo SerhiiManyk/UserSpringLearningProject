@@ -144,25 +144,6 @@ public class Task {
         this.priority = priority;
     }
 
-
-    public String getCreatedAtFormatted() {
-        return createdAt != null
-                ? createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
-                : "";
-    }
-
-    public String getUpdatedAtFormatted() {
-        return updatedAt != null
-                ? updatedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
-                : "";
-    }
-
-    public String getDeadlineFormatted() {
-        return deadline != null
-                ? deadline.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                : "";
-    }
-
     @Override
     public String toString() {
         return "Task{" +

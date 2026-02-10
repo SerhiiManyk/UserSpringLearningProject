@@ -35,20 +35,28 @@ public class TaskController {
 
     @PostMapping("/newtask")
     public String createTask(@Valid Task task,
-                             BindingResult result) {
+                             BindingResult result,
+                             RedirectAttributes redirectAttributes,
+                             Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("edit", false);
             return "taskCreating";
         }
         try {
             taskService.createTask(task);
+            redirectAttributes.addFlashAttribute(
+                    "success",
+                    "Task created successfully");
         } catch (TaskAlreadyExistException e) {
             result.rejectValue("title", "task.exists", e.getMessage());
+            model.addAttribute("edit", false);
             return "taskCreating";
         } catch (IllegalArgumentException e) {
             result.reject("task.invalid", e.getMessage());
+            model.addAttribute("edit", false);
             return "taskCreating";
         }
-        return "redirect:/taskSuccess";
+        return "redirect:/tasks";
     }
 
     @GetMapping("/edit-task-{id}")
@@ -120,6 +128,12 @@ public class TaskController {
         redirectAttributes.addFlashAttribute("backUrl", "/tasks");
         redirectAttributes.addFlashAttribute("backLabel", "Back to tasks");
         return "redirect:/successfull";
+    }
+
+    @GetMapping("/tasks")
+    public String listTasks(Model model) {
+        model.addAttribute("tasks", taskService.findAllTasks());
+        return "tasks";
     }
 }
 
