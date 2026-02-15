@@ -7,10 +7,12 @@ import java.util.List;
 
 public interface TaskDao extends CrudDao<Task>{
 
-    List<Task> findByOwner(User owner);
+    public List<Task> findByOwnerId(Long ownerId);
 
     boolean existsByTitleAndOwner(String title, User owner);
 
     boolean existsByTitleAndOwnerExcludingId(String title, User owner, Long taskId);
+
+    Long countByOwnerId(Long userId);
 
 }

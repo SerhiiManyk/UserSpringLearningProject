@@ -6,13 +6,13 @@ import com.manser.pr.domain.User;
 import com.manser.pr.exception.TaskDeleteException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Repository
-@Transactional
 public class TaskDaoImpl implements TaskDao {
 
     private final SessionFactory sessionFactory;
@@ -26,13 +26,13 @@ public class TaskDaoImpl implements TaskDao {
     }
 
     @Override
-    public List<Task> findByOwner(User owner) {
+    public List<Task> findByOwnerId(Long ownerId) {
         return getSession()
                 .createQuery(
-                        "FROM Task t WHERE t.owner = :owner",
+                        "FROM Task t WHERE t.owner.id = :ownerId",
                         Task.class
                 )
-                .setParameter("owner", owner)
+                .setParameter("ownerId", ownerId)
                 .getResultList();
     }
 
@@ -66,6 +66,17 @@ public class TaskDaoImpl implements TaskDao {
 
         return count != null && count > 0;
     }
+
+    @Override
+    public Long countByOwnerId(Long userId) {
+        return getSession().createQuery(
+                        "select count(t) from Task t where t.owner.id = :userId",
+                        Long.class
+                )
+                .setParameter("userId", userId)
+                .getSingleResult();
+    }
+
 
     @Override
     public Long save(Task entity) {
