@@ -1,9 +1,12 @@
 package com.manser.pr.domain;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 @Entity
@@ -25,13 +28,15 @@ public class Task {
     @Column(name = "DESCRIPTION", length = 500, nullable = false)
     private String description;
 
-    @Column(name = "CREATE_TIME", nullable = false)
+    @Column(name = "CREATE_TIME", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "UPDATE_TIME", nullable = true)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime updatedAt;
 
     @Column(name = "DEADLINE", nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime deadline;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -49,7 +54,7 @@ public class Task {
     @PrePersist
     void initializeCreatedAtAndDeadline() {
         if (createdAt == null) {
-            createdAt = LocalDateTime.now();
+            createdAt = LocalDateTime.now(ZoneId.of("Europe/Kyiv"));
         }
         if (deadline == null) {
             deadline = createdAt.plusDays(14);

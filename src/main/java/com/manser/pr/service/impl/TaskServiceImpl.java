@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -45,9 +46,9 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> findAllTasks() {
         User currentUser = getCurrentUser();
-        if(currentUser.getUserRole() == UserRole.ADMINISTRATOR){
+        if (currentUser.getUserRole() == UserRole.ADMINISTRATOR) {
             return taskDao.getAll();
-        }else {
+        } else {
             throw new AccessDeniedException("Only administrators can view tasks");
         }
     }
@@ -78,13 +79,14 @@ public class TaskServiceImpl implements TaskService {
         return task;
     }
 
+    @Transactional
     @Override
     public Task updateTask(Task task) {
         User currentUser = getCurrentUser();
 
         Task existTask = taskDao.getById(task.getId());
 
-        if (!existTask.getOwner().getId().equals(currentUser.getId()) || currentUser.getUserRole() == UserRole.ADMINISTRATOR) {
+        if (!existTask.getOwner().getId().equals(currentUser.getId()) || currentUser.getUserRole() != UserRole.ADMINISTRATOR) {
             throw new AccessDeniedException("You are not allowed to update this task");
         }
 
@@ -97,12 +99,13 @@ public class TaskServiceImpl implements TaskService {
         if (titleExists) {
             throw new TaskAlreadyExistException("Task with this title already exists");
         }
-            existTask.setTitle(task.getTitle());
-            existTask.setDescription(task.getDescription());
-            existTask.setStatus(task.getStatus());
-            existTask.setPriority(task.getPriority());
+        existTask.setTitle(task.getTitle());
+        existTask.setDescription(task.getDescription());
+        existTask.setStatus(task.getStatus());
+        existTask.setPriority(task.getPriority());
+        existTask.setDeadline(task.getDeadline());
 
-          return   taskDao.update(existTask);
+        return taskDao.update(existTask);
     }
 
     @Override
