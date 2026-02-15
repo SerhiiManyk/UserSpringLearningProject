@@ -78,9 +78,9 @@ public class TaskServiceImpl implements TaskService {
         if (taskDao.existsByTitleAndOwner(task.getTitle(), currentUser)) {
             throw new TaskAlreadyExistException("Task with this title already exists");
         }
-        task.setOwner(currentUser);
+        currentUser.addTask(task);
 
-        taskDao.save(task);
+        userDao.update(currentUser);
         return task;
     }
 
@@ -112,7 +112,18 @@ public class TaskServiceImpl implements TaskService {
         existTask.setPriority(task.getPriority());
         existTask.setDeadline(task.getDeadline());
 
-        return taskDao.update(existTask);
+        if (task.getOwner() != null && task.getOwner().getId() != null && !task.getOwner().equals(existTask.getOwner())) {
+
+            User newOwner = userDao.getById(task.getOwner().getId());
+            if (newOwner == null) {
+                throw new EntityNotFoundException("User with id " + task.getOwner().getId() + " does not exist");
+            }
+            User oldOwner = existTask.getOwner();
+            oldOwner.removeTask(existTask);
+            newOwner.addTask(existTask);
+        }
+
+        return existTask;
     }
 
     @Override
