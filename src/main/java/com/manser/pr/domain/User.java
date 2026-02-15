@@ -2,6 +2,8 @@ package com.manser.pr.domain;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="USERS")
@@ -39,6 +41,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "USER_ROLE")
     private UserRole userRole;
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Task> tasks = new ArrayList<>();
 
     public User() {
     }
@@ -98,6 +103,20 @@ public class User {
 
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
+    }
+
+    public List<Task> getTasks() {return tasks;}
+
+    public void setTasks(List<Task> tasks) {this.tasks = tasks;}
+
+    public void addTask(Task task) {
+        tasks.add(task);
+        task.setOwner(this);
+    }
+
+    public void removeTask(Task task) {
+        tasks.remove(task);
+        task.setOwner(null);
     }
 
     @Override
