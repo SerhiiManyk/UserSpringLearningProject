@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@Transactional
 public class TaskServiceImpl implements TaskService {
 
     private final TaskDao taskDao;
@@ -33,17 +34,21 @@ public class TaskServiceImpl implements TaskService {
         SecurityContext context = SecurityContextHolder.getContext();
         UserDetails userDetails = (UserDetails) context.getAuthentication().getPrincipal();
         String email = userDetails.getUsername();
-        return userDao.getByEmail(email);
+        User user = userDao.getByEmail(email);
+        if (user == null) throw new EntityNotFoundException("User not found");
+        return user;
     }
 
 
     @Override
+    @Transactional(readOnly = true)
     public List<Task> findAllUserTasks() {
         User currentUser = getCurrentUser();
         return taskDao.findByOwner(currentUser);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Task> findAllTasks() {
         User currentUser = getCurrentUser();
         if (currentUser.getUserRole() == UserRole.ADMINISTRATOR) {
@@ -79,14 +84,16 @@ public class TaskServiceImpl implements TaskService {
         return task;
     }
 
-    @Transactional
     @Override
     public Task updateTask(Task task) {
         User currentUser = getCurrentUser();
 
         Task existTask = taskDao.getById(task.getId());
+        if (existTask == null) {
+            throw new EntityNotFoundException("Task with id " + task.getId() + " does not exist");
+        }
 
-        if (!existTask.getOwner().getId().equals(currentUser.getId()) || currentUser.getUserRole() != UserRole.ADMINISTRATOR) {
+        if (!existTask.getOwner().getId().equals(currentUser.getId()) && currentUser.getUserRole() != UserRole.ADMINISTRATOR) {
             throw new AccessDeniedException("You are not allowed to update this task");
         }
 
@@ -124,6 +131,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Task getTaskForEdit(Long id) {
         User currentUser = getCurrentUser();
 
@@ -131,6 +139,7 @@ public class TaskServiceImpl implements TaskService {
         if (task == null) {
             throw new EntityNotFoundException("Task with id " + id + " does not exist");
         }
+        task.getOwner().getId();
         if (task.getOwner().getId().equals(currentUser.getId()) || currentUser.getUserRole() == UserRole.ADMINISTRATOR) {
             return task;
         } else {
@@ -139,6 +148,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean taskExistsForCurrentUser(String title) {
         return taskDao.existsByTitleAndOwner(title, getCurrentUser());
     }
