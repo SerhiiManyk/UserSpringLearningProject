@@ -80,7 +80,8 @@ public class TaskServiceImplTest {
         Task createdTask = taskServiceImpl.createTask(task);
 
         assertEquals(currentUser, createdTask.getOwner());
-        verify(taskDao).save(createdTask);
+        assertTrue(currentUser.getTasks().contains(createdTask));
+        verify(taskDao, never()).save(any());
     }
 
     @Test
@@ -122,14 +123,14 @@ public class TaskServiceImplTest {
         tasks.add(createSampleTask());
         tasks.add(createSampleTask());
 
-        when(taskDao.findByOwner(currentUser)).thenReturn(tasks);
+        when(taskDao.findByOwnerId(currentUser.getId())).thenReturn(tasks);
 
         List<Task> resultList = taskServiceImpl.findAllUserTasks();
 
         assertEquals(2, resultList.size());
         assertEquals(tasks, resultList);
 
-        verify(taskDao).findByOwner(currentUser);
+        verify(taskDao).findByOwnerId(currentUser.getId());
     }
 
     @Test
@@ -137,14 +138,14 @@ public class TaskServiceImplTest {
 
         User currentUser = setupSecurityContextForUser("test@mail.com");
 
-        when(taskDao.findByOwner(currentUser)).thenReturn(Collections.emptyList());
+        when(taskDao.findByOwnerId(currentUser.getId())).thenReturn(Collections.emptyList());
 
         List<Task> result = taskServiceImpl.findAllUserTasks();
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
 
-        verify(taskDao).findByOwner(currentUser);
+        verify(taskDao).findByOwnerId(currentUser.getId());
     }
 
     @Test
@@ -180,10 +181,10 @@ public class TaskServiceImplTest {
     public void updateTaskShouldUpdateTaskWhenUserIsOwner() {
         User currentUser = setupSecurityContextForUser("test@mail.com");
         Task task = createSampleTask();
+        task.setId(1L);
         task.setOwner(currentUser);
 
         when(taskDao.getById(1L)).thenReturn(task);
-        when(taskDao.update(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Task updatedData = new Task();
         updatedData.setId(1L);
@@ -197,7 +198,8 @@ public class TaskServiceImplTest {
         assertEquals(TaskStatus.IN_PROGRESS, result.getStatus());
         assertEquals(currentUser, result.getOwner());
 
-        verify(taskDao).update(task);
+        verify(taskDao).getById(1L);
+        verify(taskDao, never()).update(any());
     }
 
     @Test
@@ -211,6 +213,8 @@ public class TaskServiceImplTest {
 
         Task task = createSampleTask();
         task.setOwner(taskOwner);
+        task.setId(1L);
+
 
         Task taskToUpdate = createSampleTask();
         taskToUpdate.setId(1L);
@@ -218,13 +222,15 @@ public class TaskServiceImplTest {
         taskToUpdate.setStatus(TaskStatus.IN_PROGRESS);
 
         when(taskDao.getById(1L)).thenReturn(task);
-        when(taskDao.update(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Task result = taskServiceImpl.updateTask(taskToUpdate);
 
         assertEquals(taskOwner, result.getOwner());
         assertEquals("Title 2", result.getTitle());
         assertEquals(TaskStatus.IN_PROGRESS, result.getStatus());
+
+        verify(taskDao).getById(1L);
+        verify(taskDao, never()).update(any());
     }
 
     @Test

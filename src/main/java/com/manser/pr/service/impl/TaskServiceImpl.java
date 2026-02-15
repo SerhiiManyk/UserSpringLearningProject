@@ -80,7 +80,6 @@ public class TaskServiceImpl implements TaskService {
         }
         currentUser.addTask(task);
 
-        userDao.update(currentUser);
         return task;
     }
 
@@ -112,7 +111,7 @@ public class TaskServiceImpl implements TaskService {
         existTask.setPriority(task.getPriority());
         existTask.setDeadline(task.getDeadline());
 
-        if (task.getOwner() != null && task.getOwner().getId() != null && !task.getOwner().equals(existTask.getOwner())) {
+        if (task.getOwner() != null && task.getOwner().getId() != null && !task.getOwner().getId().equals(existTask.getOwner().getId())) {
 
             User newOwner = userDao.getById(task.getOwner().getId());
             if (newOwner == null) {
@@ -150,7 +149,6 @@ public class TaskServiceImpl implements TaskService {
         if (task == null) {
             throw new EntityNotFoundException("Task with id " + id + " does not exist");
         }
-        task.getOwner().getId();
         if (task.getOwner().getId().equals(currentUser.getId()) || currentUser.getUserRole() == UserRole.ADMINISTRATOR) {
             return task;
         } else {
