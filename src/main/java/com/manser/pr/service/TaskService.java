@@ -20,4 +20,6 @@ public interface TaskService {
 
     boolean taskExistsForCurrentUser(String title);
 
+    Long countByOwnerId (Long ownerId);
+
 }

@@ -44,7 +44,7 @@ public class TaskServiceImpl implements TaskService {
     @Transactional(readOnly = true)
     public List<Task> findAllUserTasks() {
         User currentUser = getCurrentUser();
-        return taskDao.findByOwner(currentUser);
+        return taskDao.findByOwnerId(currentUser.getId());
     }
 
     @Override
@@ -162,5 +162,14 @@ public class TaskServiceImpl implements TaskService {
     @Transactional(readOnly = true)
     public boolean taskExistsForCurrentUser(String title) {
         return taskDao.existsByTitleAndOwner(title, getCurrentUser());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long countByOwnerId (Long ownerId) {
+        if (ownerId == null) {
+            throw new IllegalArgumentException("Owner id must not be null");
+        }
+        return taskDao.countByOwnerId(ownerId);
     }
 }
