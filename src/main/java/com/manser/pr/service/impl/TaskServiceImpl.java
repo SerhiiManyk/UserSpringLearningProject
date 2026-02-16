@@ -164,10 +164,15 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public Long countByOwnerId (Long ownerId) {
+    public Long countByOwnerId(Long ownerId) {
         if (ownerId == null) {
             throw new IllegalArgumentException("Owner id must not be null");
         }
         return taskDao.countByOwnerId(ownerId);
+    }
+
+    @Override
+    public List<Object[]> countTasksGroupedByOwner() {
+        return taskDao.countTasksGroupedByOwner();
     }
 }

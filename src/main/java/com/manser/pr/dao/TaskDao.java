@@ -15,4 +15,6 @@ public interface TaskDao extends CrudDao<Task>{
 
     Long countByOwnerId(Long userId);
 
+    List<Object[]> countTasksGroupedByOwner();
+
 }

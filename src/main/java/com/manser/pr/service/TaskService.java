@@ -22,4 +22,6 @@ public interface TaskService {
 
     Long countByOwnerId (Long ownerId);
 
+    public List<Object[]> countTasksGroupedByOwner();
+
 }

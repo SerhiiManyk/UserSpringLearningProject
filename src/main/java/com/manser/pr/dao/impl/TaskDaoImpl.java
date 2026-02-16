@@ -77,6 +77,15 @@ public class TaskDaoImpl implements TaskDao {
                 .getSingleResult();
     }
 
+    @Override
+    public List<Object[]> countTasksGroupedByOwner() {
+        return getSession()
+                .createQuery(
+                        "select t.owner.id, count(t) from Task t group by t.owner.id",
+                        Object[].class
+                )
+                .getResultList();
+    }
 
     @Override
     public Long save(Task entity) {
