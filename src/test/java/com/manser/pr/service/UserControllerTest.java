@@ -29,6 +29,9 @@ public class UserControllerTest {
     private UserService userService;
 
     @Mock
+    private TaskService taskService;
+
+    @Mock
     private BindingResult bindingResult;
 
     @Mock
@@ -56,13 +59,17 @@ public class UserControllerTest {
 
     @Test
     public void shouldReturnUserListSortByName() {
-        when(userService.getAllSorted(SortField.NAME, SortOrder.ASC)).thenReturn(List.of(new User(), new User()));
+        List<User> mockedUsers = List.of(new User(), new User());
+        when(userService.getAllSorted(SortField.NAME, SortOrder.ASC)).thenReturn(mockedUsers);
+        when(taskService.countTasksGroupedByOwner()).thenReturn(List.of());
 
         String viewName = userController.sortedListUsers(SortField.NAME, SortOrder.ASC, model, redirectAttributes);
 
         Assertions.assertEquals("userlist", viewName);
         Assertions.assertTrue(model.containsAttribute("users"));
+        Assertions.assertTrue(model.containsAttribute("taskCounts"));
         verify(userService).getAllSorted(SortField.NAME, SortOrder.ASC);
+        verify(taskService).countTasksGroupedByOwner();
     }
 
     @Test
@@ -389,14 +396,17 @@ public class UserControllerTest {
         SortOrder sortOrder = null;
         List<User> users = List.of(new User(), new User());
 
-        when(userService.getAllSorted(sortField, sortOrder)).thenReturn(users);
+        when(userService.getAll()).thenReturn(users);
+        when(taskService.countTasksGroupedByOwner()).thenReturn(List.of());
 
         String viewName = userController.sortedListUsers(sortField,sortOrder,model,redirectAttributes);
 
-        verify(userService).getAllSorted(sortField, sortOrder);
+        verify(userService).getAll();
+        verify(taskService).countTasksGroupedByOwner();
         Assertions.assertEquals("userlist", viewName);
         Assertions.assertTrue(model.containsAttribute("users"));
         Assertions.assertEquals(users, ((ExtendedModelMap) model).get("users"));
+        Assertions.assertTrue(model.containsAttribute("taskCounts"));
         Assertions.assertFalse(model.containsAttribute("infoMessage"));
     }
 

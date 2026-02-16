@@ -49,22 +49,24 @@
                 <th>ID</th>
                 <th>NAME</th>
                 <th>EMail</th>
-                <th>PASSWORD</th>
                 <th>PHONE NUMBER</th>
                 <th>USER ROLE</th>
+                <th>TASKS</th>
                 <th width="100"></th>
                 <th width="100"></th>
             </tr>
             </thead>
             <tbody>
-            <c:forEach items="${users}" var="user">
+            <c:forEach items="${taskCounts}" var="row">
+                <c:set var="user" value="${row[0]}" />
+                <c:set var="count" value="${row[1]}" />
                 <tr>
                     <td>${user.id}</td>
                     <td>${user.name}</td>
                     <td>${user.email}</td>
-                    <td>${user.password}</td>
                     <td>${user.phone}</td>
                     <td>${user.userRole}</td>
+                    <td>${count}</td>
 
                     <!-- Редагування: доступне для ADMIN та REGULAR -->
                     <sec:authorize access="hasAnyRole('ROLE_ADMINISTRATOR','ROLE_REGULAR_USER')">

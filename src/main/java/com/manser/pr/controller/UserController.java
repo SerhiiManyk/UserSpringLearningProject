@@ -5,6 +5,7 @@ import com.manser.pr.domain.SortOrder;
 import com.manser.pr.domain.User;
 import com.manser.pr.domain.UserRole;
 import com.manser.pr.exception.UserAlreadyExistsException;
+import com.manser.pr.service.TaskService;
 import com.manser.pr.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,9 +23,11 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final TaskService taskService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, TaskService taskService) {
         this.userService = userService;
+        this.taskService = taskService;
     }
 
     @ModelAttribute("roles")
@@ -137,7 +140,11 @@ public class UserController {
                                   Model model,
                                   RedirectAttributes redirectAttributes) {
         try {
-            model.addAttribute("users", userService.getAllSorted(sortField, sortOrder));
+            List<User> users = (sortField != null)
+                    ? userService.getAllSorted(sortField, sortOrder)
+                    : userService.getAll();
+            model.addAttribute("users", users);
+            model.addAttribute("taskCounts", taskService.countTasksGroupedByOwner());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute(
                     "alertMessage",
