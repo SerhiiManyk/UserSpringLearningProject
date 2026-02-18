@@ -57,16 +57,14 @@
             </tr>
             </thead>
             <tbody>
-            <c:forEach items="${taskCounts}" var="row">
-                <c:set var="user" value="${row[0]}" />
-                <c:set var="count" value="${row[1]}" />
+            <c:forEach items="${users}" var="user">
                 <tr>
                     <td>${user.id}</td>
                     <td>${user.name}</td>
                     <td>${user.email}</td>
                     <td>${user.phone}</td>
                     <td>${user.userRole}</td>
-                    <td>${count}</td>
+                    <td>${taskCounts[user.id] != null ? taskCounts[user.id] : 0}</td>
 
                     <!-- Редагування: доступне для ADMIN та REGULAR -->
                     <sec:authorize access="hasAnyRole('ROLE_ADMINISTRATOR','ROLE_REGULAR_USER')">

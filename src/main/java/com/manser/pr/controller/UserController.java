@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
@@ -143,8 +146,16 @@ public class UserController {
             List<User> users = (sortField != null)
                     ? userService.getAllSorted(sortField, sortOrder)
                     : userService.getAll();
+
+            List<Object[]> counts = taskService.countTasksGroupedByOwner();
+            Map<Long, Long> taskCounts = counts.stream()
+                    .collect(Collectors.toMap(
+                            row -> ((User) row[0]).getId(),
+                            row -> (Long) row[1]
+                    ));
+
             model.addAttribute("users", users);
-            model.addAttribute("taskCounts", taskService.countTasksGroupedByOwner());
+            model.addAttribute("taskCounts", taskCounts);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute(
                     "alertMessage",

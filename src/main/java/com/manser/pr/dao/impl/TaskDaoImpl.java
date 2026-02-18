@@ -81,7 +81,10 @@ public class TaskDaoImpl implements TaskDao {
     public List<Object[]> countTasksGroupedByOwner() {
         return getSession()
                 .createQuery(
-                        "select t.owner.id, count(t) from Task t group by t.owner.id",
+                        "select u, count(t)\n" +
+                                "from User u\n" +
+                                "left join u.tasks t\n" +
+                                "group by u",
                         Object[].class
                 )
                 .getResultList();
