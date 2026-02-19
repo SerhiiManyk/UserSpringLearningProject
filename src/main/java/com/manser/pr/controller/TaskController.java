@@ -4,7 +4,10 @@ import com.manser.pr.domain.Task;
 import com.manser.pr.domain.User;
 import com.manser.pr.exception.TaskAlreadyExistException;
 import com.manser.pr.service.TaskService;
+import com.manser.pr.service.UserService;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,33 +18,51 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
+import java.security.Principal;
 
 
 @Controller
 public class TaskController {
 
     private final TaskService taskService;
+    private final UserService userService;
 
-    public TaskController(TaskService taskService) {
+    public TaskController(TaskService taskService, UserService userService) {
         this.taskService = taskService;
+        this.userService = userService;
     }
 
-    @GetMapping("/newtask")
-    public String newTask(Model model) {
-        model.addAttribute("task", new Task());
+    @GetMapping("/users/{userId}/tasks/new")
+    public String newTask(@PathVariable Long userId,
+                          Model model,
+                          Principal principal) {
+        checkAccess(userId, principal);
+
+        Task task = new Task();
+        task.setOwner(userService.getById(userId));
+
+        model.addAttribute("task", task);
         model.addAttribute("edit", false);
         return "taskCreating";
     }
 
-    @PostMapping("/newtask")
-    public String createTask(@Valid Task task,
+    @PostMapping("/users/{userId}/tasks")
+    public String createTask(@PathVariable Long userId,
+                             @Valid Task task,
                              BindingResult result,
                              RedirectAttributes redirectAttributes,
-                             Model model) {
+                             Model model,
+                             Principal principal) {
+
+        checkAccess(userId, principal);
+
         if (result.hasErrors()) {
             model.addAttribute("edit", false);
             return "taskCreating";
         }
+
+        task.setOwner(userService.getById(userId));
+
         try {
             taskService.createTask(task);
             redirectAttributes.addFlashAttribute(
@@ -56,36 +77,47 @@ public class TaskController {
             model.addAttribute("edit", false);
             return "taskCreating";
         }
-        return "redirect:/tasks";
+        return "redirect:/users/" + userId + "/tasks";
     }
 
-    @GetMapping("/edit-task-{id}")
-    public String editTask(@PathVariable Long id, Model model) {
+    @GetMapping("/users/{userId}/tasks/{taskId}/edit")
+    public String editTask(@PathVariable Long userId,
+                           @PathVariable Long taskId,
+                           Model model,
+                           Principal principal) {
+
+        checkAccess(userId, principal);
+
         try {
-            Task task = taskService.getTaskForEdit(id);
+            Task task = taskService.getTaskForEdit(taskId);
             model.addAttribute("task", task);
             model.addAttribute("edit", true);
             return "taskCreating";
-        } catch (
-                EntityNotFoundException e) {
-            return "redirect:/tasks";
-        } catch (
-                AccessDeniedException e) {
+        } catch (EntityNotFoundException e) {
+            return "redirect:/users/" + userId + "/tasks";
+        } catch (AccessDeniedException e) {
             return "redirect:/access-denied";
         }
     }
 
-    @PostMapping("/edit-task-{id}")
-    public String updateTask(@PathVariable Long id,
+
+    @PostMapping("/users/{userId}/tasks/{taskId}")
+    public String updateTask(@PathVariable Long userId,
+                             @PathVariable Long taskId,
                              @Valid Task task,
                              BindingResult result,
                              RedirectAttributes redirectAttributes,
-                             Model model) {
+                             Model model,
+                             Principal principal) {
+
+        checkAccess(userId, principal);
+        task.setId(taskId);
+
         if (result.hasErrors()) {
             model.addAttribute("edit", true);
             return "taskCreating";
         }
-        task.setId(id);
+
         try {
             taskService.updateTask(task);
         } catch (TaskAlreadyExistException e) {
@@ -99,24 +131,28 @@ public class TaskController {
                 "success",
                 "Task " + task.getTitle() + " updated successfully"
         );
-        return "redirect:/tasks";
+        return "redirect:/users/" + userId + "/tasks";
     }
 
-    @PostMapping("/delete-task-{id}")
-    public String deleteTask(@PathVariable Long id,
-                             RedirectAttributes redirectAttributes) {
+    @PostMapping("/users/{userId}/tasks/{taskId}/delete")
+    public String deleteTask(@PathVariable Long userId,
+                             @PathVariable Long taskId,
+                             RedirectAttributes redirectAttributes,
+                             Principal principal) {
+        checkAccess(userId, principal);
+
         try {
-            taskService.deleteTaskById(id);
+            taskService.deleteTaskById(taskId);
             redirectAttributes.addFlashAttribute(
                     "success",
                     "Task deleted successfully"
             );
         } catch (EntityNotFoundException e) {
-            return "redirect:/tasks";
+            return "redirect:/users/" + userId + "/tasks";
         } catch (AccessDeniedException e) {
             return "redirect:/access-denied";
         }
-        return "redirect:/tasks";
+        return "redirect:/users/" + userId + "/tasks";
     }
 
     @GetMapping("/access-denied")
@@ -125,15 +161,43 @@ public class TaskController {
                 "alertMessage",
                 "You do not have permission to perform this action."
         );
-        redirectAttributes.addFlashAttribute("backUrl", "/tasks");
+        redirectAttributes.addFlashAttribute("backUrl", "/users");
         redirectAttributes.addFlashAttribute("backLabel", "Back to tasks");
         return "redirect:/successfull";
     }
 
-    @GetMapping("/tasks")
-    public String listTasks(Model model) {
-        model.addAttribute("tasks", taskService.findAllTasks());
-        return "tasks";
+    @GetMapping("/users/{userId}/tasks")
+    public String listTasks(@PathVariable Long userId,
+                            Model model,
+                            Principal principal) {
+        checkAccess(userId, principal);
+
+        model.addAttribute("tasks",
+                taskService.getTaskForEdit(userId));
+        return "/users/" + userId + "/tasks";
+    }
+
+    private void checkAccess(Long userId, Principal principal) {
+        if (principal == null) {
+            throw new AccessDeniedException("Unauthorized");
+        }
+        Authentication auth =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority()
+                        .equals("ROLE_ADMINISTRATOR"));
+
+        if (isAdmin) {
+            return;
+        }
+
+        User currentUser =
+                userService.getByEmail(principal.getName());
+
+        if (!currentUser.getId().equals(userId)) {
+            throw new AccessDeniedException("Forbidden");
+        }
     }
 }
 
