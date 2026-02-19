@@ -64,7 +64,25 @@
                     <td>${user.email}</td>
                     <td>${user.phone}</td>
                     <td>${user.userRole}</td>
-                    <td>${taskCounts[user.id] != null ? taskCounts[user.id] : 0}</td>
+                    <td>
+                        <c:set var="count" value="${taskCounts[user.id] != null ? taskCounts[user.id] : 0}" />
+
+                        <c:choose>
+                            <c:when test="${count == 0}">
+                                <a href="<c:url value='/users/${user.id}/tasks/new'/>"
+                                   class="btn btn-primary btn-sm">
+                                    Add task
+                                </a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="<c:url value='/users/${user.id}/tasks'/>"
+                                   class="btn btn-info btn-sm">
+                                    ${count}
+                                </a>
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
+
 
                     <!-- Редагування: доступне для ADMIN та REGULAR -->
                     <sec:authorize access="hasAnyRole('ROLE_ADMINISTRATOR','ROLE_REGULAR_USER')">
