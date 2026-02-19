@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -147,15 +146,8 @@ public class UserController {
                     ? userService.getAllSorted(sortField, sortOrder)
                     : userService.getAll();
 
-            List<Object[]> counts = taskService.countTasksGroupedByOwner();
-            Map<Long, Long> taskCounts = counts.stream()
-                    .collect(Collectors.toMap(
-                            row -> ((User) row[0]).getId(),
-                            row -> (Long) row[1]
-                    ));
-
             model.addAttribute("users", users);
-            model.addAttribute("taskCounts", taskCounts);
+            model.addAttribute("taskCounts", buildTaskCountMap());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute(
                     "alertMessage",
@@ -177,6 +169,7 @@ public class UserController {
             List<User> resultList = userService.getSearchResult(sortField, searchValue);
 
             model.addAttribute("users", resultList);
+            model.addAttribute("taskCounts", buildTaskCountMap());
 
             if (resultList.isEmpty()) {
                 model.addAttribute("infoMessage", "No results found");
@@ -186,6 +179,15 @@ public class UserController {
             model.addAttribute("infoMessage", e.getMessage());
         }
         return "userlist";
+    }
+
+    private Map<Long, Long> buildTaskCountMap() {
+        List<Object[]> counts = taskService.countTasksGroupedByOwner();
+        return counts.stream()
+                .collect(Collectors.toMap(
+                        row -> ((User) row[0]).getId(),
+                        row -> (Long) row[1]
+                ));
     }
 
 }
