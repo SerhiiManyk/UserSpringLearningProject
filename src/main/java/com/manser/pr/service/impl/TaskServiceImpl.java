@@ -172,11 +172,16 @@ public class TaskServiceImpl implements TaskService {
         if (task == null) {
             throw new EntityNotFoundException("Task with id " + id + " does not exist");
         }
-        if (task.getOwner().getId().equals(currentUser.getId()) || currentUser.getUserRole() == UserRole.ADMINISTRATOR) {
-            taskDao.delete(task);
-        } else {
+        boolean isAdmin =
+                currentUser.getUserRole() == UserRole.ADMINISTRATOR;
+
+        boolean isOwner =
+                task.getOwner().getId().equals(currentUser.getId());
+
+        if (!isAdmin && !isOwner) {
             throw new AccessDeniedException("You are not allowed to delete this task");
         }
+        task.getOwner().removeTask(task);
     }
 
     @Override
