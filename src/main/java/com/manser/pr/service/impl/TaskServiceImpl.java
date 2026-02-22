@@ -72,13 +72,32 @@ public class TaskServiceImpl implements TaskService {
         if (task.getPriority() == null) {
             throw new IllegalArgumentException("Task priority must not be null");
         }
+        if (task.getOwner() == null || task.getOwner().getId() == null) {
+            throw new IllegalArgumentException("Task owner must not be null");
+        }
 
         User currentUser = getCurrentUser();
 
-        if (taskDao.existsByTitleAndOwner(task.getTitle(), currentUser)) {
+        boolean isAdmin =
+                currentUser.getUserRole() == UserRole.ADMINISTRATOR;
+
+        User owner = userDao.getById(task.getOwner().getId());
+        if (owner == null) {
+            throw new EntityNotFoundException("User not found");
+        }
+
+        if (!isAdmin && !owner.getId().equals(currentUser.getId())) {
+            throw new AccessDeniedException("You cannot create tasks for another user");
+        }
+
+        boolean exists =
+                taskDao.existsByTitleAndOwner(task.getTitle(), owner);
+
+        if (exists) {
             throw new TaskAlreadyExistException("Task with this title already exists");
         }
-        currentUser.addTask(task);
+
+        owner.addTask(task);
 
         return task;
     }
@@ -144,7 +163,6 @@ public class TaskServiceImpl implements TaskService {
 
         return existTask;
     }
-
 
     @Override
     public void deleteTaskById(Long id) {
