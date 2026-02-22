@@ -192,6 +192,7 @@ public class TaskServiceImpl implements TaskService {
             throw new AccessDeniedException("You are not allowed to delete this task");
         }
         task.getOwner().removeTask(task);
+        taskDao.delete(task);
     }
 
     @Override

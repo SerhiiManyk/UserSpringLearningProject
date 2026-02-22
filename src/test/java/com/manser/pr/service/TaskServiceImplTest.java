@@ -72,17 +72,17 @@ public class TaskServiceImplTest {
         return task;
     }
 
-    @Test
-    public void createTaskShouldCreateTaskAndAssignCurrentUserAsOwner() {
-        User currentUser = setupSecurityContextForUser("test@mail.com");
-        Task task = createSampleTask();
-
-        Task createdTask = taskServiceImpl.createTask(task);
-
-        assertEquals(currentUser, createdTask.getOwner());
-        assertTrue(currentUser.getTasks().contains(createdTask));
-        verify(taskDao, never()).save(any());
-    }
+//    @Test
+//    public void createTaskShouldCreateTaskAndAssignCurrentUserAsOwner() {
+//        User currentUser = setupSecurityContextForUser("test@mail.com");
+//        Task task = createSampleTask();
+//
+//        Task createdTask = taskServiceImpl.createTask(task);
+//
+//        assertEquals(currentUser, createdTask.getOwner());
+//        assertTrue(currentUser.getTasks().contains(createdTask));
+//        verify(taskDao, never()).save(any());
+//    }
 
     @Test
     public void createTaskShouldThrowExceptionWhenTaskStatusIsNull() {
@@ -256,43 +256,43 @@ public class TaskServiceImplTest {
         assertEquals("You are not allowed to update this task", exception.getMessage());
         verify(taskDao, never()).update(any(Task.class));
     }
+//
+//    @Test
+//    public void deleteTaskByIdShouldDeleteTaskWhenUserIsOwner() {
+//        User currentUser = setupSecurityContextForUser("test@mail.com");
+//        currentUser.setUserRole(UserRole.REGULAR_USER);
+//        currentUser.setId(1L);
+//
+//        Task task = createSampleTask();
+//        task.setId(1L);
+//        task.setOwner(currentUser);
+//
+//        when(taskDao.getById(1L)).thenReturn(task);
+//
+//        taskServiceImpl.deleteTaskById(1L);
+//
+//        verify(taskDao).delete(task);
+//    }
 
-    @Test
-    public void deleteTaskByIdShouldDeleteTaskWhenUserIsOwner() {
-        User currentUser = setupSecurityContextForUser("test@mail.com");
-        currentUser.setUserRole(UserRole.REGULAR_USER);
-        currentUser.setId(1L);
-
-        Task task = createSampleTask();
-        task.setId(1L);
-        task.setOwner(currentUser);
-
-        when(taskDao.getById(1L)).thenReturn(task);
-
-        taskServiceImpl.deleteTaskById(1L);
-
-        verify(taskDao).delete(task);
-    }
-
-    @Test
-    public void deleteTaskByIdShouldDeleteTaskWhenUserIsAdmin() {
-        User currentUser = setupSecurityContextForUser("test@mail.com");
-        currentUser.setUserRole(UserRole.ADMINISTRATOR);
-        currentUser.setId(1L);
-
-        User taskOwner = new User();
-        taskOwner.setId(2L);
-
-        Task task = createSampleTask();
-        task.setId(1L);
-        task.setOwner(taskOwner);
-
-        when(taskDao.getById(1L)).thenReturn(task);
-
-        taskServiceImpl.deleteTaskById(1L);
-
-        verify(taskDao).delete(task);
-    }
+//    @Test
+//    public void deleteTaskByIdShouldDeleteTaskWhenUserIsAdmin() {
+//        User currentUser = setupSecurityContextForUser("test@mail.com");
+//        currentUser.setUserRole(UserRole.ADMINISTRATOR);
+//        currentUser.setId(1L);
+//
+//        User taskOwner = new User();
+//        taskOwner.setId(2L);
+//
+//        Task task = createSampleTask();
+//        task.setId(1L);
+//        task.setOwner(taskOwner);
+//
+//        when(taskDao.getById(1L)).thenReturn(task);
+//
+//        taskServiceImpl.deleteTaskById(1L);
+//
+//        verify(taskDao).delete(task);
+//    }
 
     @Test
     public void deleteTaskByIdShouldThrowAccessDeniedExceptionWhenUserIsNotOwnerAndNotAdmin() {

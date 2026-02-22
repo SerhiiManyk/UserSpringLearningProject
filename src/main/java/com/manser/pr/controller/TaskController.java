@@ -1,13 +1,10 @@
 package com.manser.pr.controller;
 
 import com.manser.pr.domain.Task;
-import com.manser.pr.domain.User;
 import com.manser.pr.exception.TaskAlreadyExistException;
 import com.manser.pr.service.TaskService;
 import com.manser.pr.service.UserService;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,8 +15,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
-import java.security.Principal;
-
 
 @Controller
 public class TaskController {
@@ -34,9 +29,7 @@ public class TaskController {
 
     @GetMapping("/users/{userId}/tasks/new")
     public String newTask(@PathVariable Long userId,
-                          Model model,
-                          Principal principal) {
-        checkAccess(userId, principal);
+                          Model model) {
 
         Task task = new Task();
         task.setOwner(userService.getById(userId));
@@ -51,10 +44,7 @@ public class TaskController {
                              @Valid Task task,
                              BindingResult result,
                              RedirectAttributes redirectAttributes,
-                             Model model,
-                             Principal principal) {
-
-        checkAccess(userId, principal);
+                             Model model) {
 
         if (result.hasErrors()) {
             model.addAttribute("edit", false);
@@ -83,11 +73,7 @@ public class TaskController {
     @GetMapping("/users/{userId}/tasks/{taskId}/edit")
     public String editTask(@PathVariable Long userId,
                            @PathVariable Long taskId,
-                           Model model,
-                           Principal principal) {
-
-        checkAccess(userId, principal);
-
+                           Model model) {
         try {
             Task task = taskService.getTaskForEdit(taskId);
             model.addAttribute("task", task);
@@ -107,10 +93,7 @@ public class TaskController {
                              @Valid Task task,
                              BindingResult result,
                              RedirectAttributes redirectAttributes,
-                             Model model,
-                             Principal principal) {
-
-        checkAccess(userId, principal);
+                             Model model) {
         task.setId(taskId);
 
         if (result.hasErrors()) {
@@ -118,8 +101,9 @@ public class TaskController {
             return "taskCreating";
         }
 
+        Task updatedTask;
         try {
-            taskService.updateTask(task);
+            updatedTask = taskService.updateTask(task);
         } catch (TaskAlreadyExistException e) {
             result.rejectValue("title", "task.exists", e.getMessage());
             model.addAttribute("edit", true);
@@ -131,17 +115,16 @@ public class TaskController {
                 "success",
                 "Task " + task.getTitle() + " updated successfully"
         );
-        return "redirect:/users/" + userId + "/tasks";
+        return "redirect:/users/" + updatedTask.getOwner().getId() + "/tasks";
     }
 
     @PostMapping("/users/{userId}/tasks/{taskId}/delete")
     public String deleteTask(@PathVariable Long userId,
                              @PathVariable Long taskId,
-                             RedirectAttributes redirectAttributes,
-                             Principal principal) {
-        checkAccess(userId, principal);
-
+                             RedirectAttributes redirectAttributes) {
+        Task task;
         try {
+            task = taskService.getTaskForEdit(taskId);
             taskService.deleteTaskById(taskId);
             redirectAttributes.addFlashAttribute(
                     "success",
@@ -152,7 +135,7 @@ public class TaskController {
         } catch (AccessDeniedException e) {
             return "redirect:/access-denied";
         }
-        return "redirect:/users/" + userId + "/tasks";
+        return "redirect:/users/" + task.getOwner().getId() + "/tasks";
     }
 
     @GetMapping("/access-denied")
@@ -173,29 +156,6 @@ public class TaskController {
         model.addAttribute("tasks",
                 taskService.findAllUserTasks(userId));
         return "tasks";
-    }
-
-    private void checkAccess(Long userId, Principal principal) {
-        if (principal == null) {
-            throw new AccessDeniedException("Unauthorized");
-        }
-        Authentication auth =
-                SecurityContextHolder.getContext().getAuthentication();
-
-        boolean isAdmin = auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority()
-                        .equals("ROLE_ADMINISTRATOR"));
-
-        if (isAdmin) {
-            return;
-        }
-
-        User currentUser =
-                userService.getByEmail(principal.getName());
-
-        if (!currentUser.getId().equals(userId)) {
-            throw new AccessDeniedException("Forbidden");
-        }
     }
 }
 
