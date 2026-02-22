@@ -78,7 +78,7 @@
 
                         <!-- EDIT -->
                         <td>
-                            <a href="<c:url value='/edit-task-${task.id}'/>"
+                            <a href="<c:url value='/users/${userId}/tasks/${task.id}/edit'/>"
                                class="btn btn-xs btn-primary">
                                 Edit
                             </a>
@@ -86,15 +86,21 @@
 
                         <!-- DELETE (only for authorized users) -->
                         <td>
-                            <sec:authorize access="hasRole('ADMIN')">
-                                <form action="<c:url value='/delete-task-${task.id}'/>"
+                            <sec:authorize access="hasRole('ADMINISTRATOR')">
+                                <form action="<c:url value='/users/${userId}/tasks/${task.id}/delete'/>"
                                       method="post"
                                       style="display:inline;">
-                                    <button type="submit"
-                                            class="btn btn-xs btn-danger"
-                                            onclick="return confirm('Delete this task?');">
-                                        Delete
-                                    </button>
+
+                                <input type="hidden"
+                                      name="${_csrf.parameterName}"
+                                      value="${_csrf.token}" />
+
+                                <button type="submit"
+                                      class="btn btn-xs btn-danger"
+                                      onclick="return confirm('Delete this task?');">
+                                      Delete
+                                </button>
+
                                 </form>
                             </sec:authorize>
                         </td>
