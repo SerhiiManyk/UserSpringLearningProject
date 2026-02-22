@@ -35,10 +35,12 @@
             <!-- form action -->
             <c:choose>
                 <c:when test="${edit}">
-                    <c:url var="formAction" value="/edit-task-${task.id}" />
+                    <c:url var="formAction"
+                           value="/users/${task.owner.id}/tasks/${task.id}" />
                 </c:when>
                 <c:otherwise>
-                    <c:url var="formAction" value="/newtask" />
+                    <c:url var="formAction"
+                           value="/users/${task.owner.id}/tasks" />
                 </c:otherwise>
             </c:choose>
 
@@ -80,7 +82,7 @@
                     <div class="col-sm-4">
                         <form:select path="status" cssClass="form-control">
                             <form:option value="" label="-- Select status --"/>
-                            <form:options items="${T(com.manser.pr.domain.TaskStatus).values()}"/>
+                            <form:options items="${statuses}"/>
                         </form:select>
                         <form:errors path="status" cssClass="text-danger"/>
                     </div>
@@ -92,7 +94,7 @@
                     <div class="col-sm-4">
                         <form:select path="priority" cssClass="form-control">
                             <form:option value="" label="-- Select priority --"/>
-                            <form:options items="${T(com.manser.pr.domain.TaskPriority).values()}"/>
+                            <form:options items="${priorities}"/>
                         </form:select>
                         <form:errors path="priority" cssClass="text-danger"/>
                     </div>

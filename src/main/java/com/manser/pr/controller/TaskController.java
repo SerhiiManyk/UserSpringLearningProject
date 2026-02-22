@@ -36,6 +36,8 @@ public class TaskController {
 
         model.addAttribute("task", task);
         model.addAttribute("edit", false);
+        model.addAttribute("statuses", com.manser.pr.domain.TaskStatus.values());
+        model.addAttribute("priorities", com.manser.pr.domain.Priority.values());
         return "taskCreating";
     }
 
@@ -78,6 +80,8 @@ public class TaskController {
             Task task = taskService.getTaskForEdit(taskId);
             model.addAttribute("task", task);
             model.addAttribute("edit", true);
+            model.addAttribute("statuses", com.manser.pr.domain.TaskStatus.values());
+            model.addAttribute("priorities", com.manser.pr.domain.Priority.values());
             return "taskCreating";
         } catch (EntityNotFoundException e) {
             return "redirect:/users/" + userId + "/tasks";
