@@ -84,7 +84,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional
     public Task updateTask(Task task) {
+
         User currentUser = getCurrentUser();
 
         Task existTask = taskDao.getById(task.getId());
@@ -92,38 +94,57 @@ public class TaskServiceImpl implements TaskService {
             throw new EntityNotFoundException("Task with id " + task.getId() + " does not exist");
         }
 
-        if (!existTask.getOwner().getId().equals(currentUser.getId()) && currentUser.getUserRole() != UserRole.ADMINISTRATOR) {
+        boolean isAdmin = currentUser.getUserRole() == UserRole.ADMINISTRATOR;
+
+        boolean isOwner = existTask.getOwner().getId().equals(currentUser.getId());
+
+        if (!isOwner && !isAdmin) {
             throw new AccessDeniedException("You are not allowed to update this task");
         }
 
-        boolean titleExists = taskDao.existsByTitleAndOwnerExcludingId(
-                task.getTitle(),
-                existTask.getOwner(),
-                task.getId()
-        );
+        User finalOwner = existTask.getOwner();
+
+        if (task.getOwner() != null
+                && task.getOwner().getId() != null
+                && !existTask.getOwner().getId()
+                .equals(task.getOwner().getId())) {
+
+            if (!isAdmin) {
+                throw new AccessDeniedException("Only admin can reassign tasks");
+            }
+
+            User newOwner = userDao.getById(task.getOwner().getId());
+
+            if (newOwner == null) {
+                throw new EntityNotFoundException("User not found");
+            }
+
+            finalOwner = newOwner;
+        }
+
+        boolean titleExists =
+                taskDao.existsByTitleAndOwnerExcludingId(task.getTitle(), finalOwner, task.getId());
 
         if (titleExists) {
             throw new TaskAlreadyExistException("Task with this title already exists");
         }
+
         existTask.setTitle(task.getTitle());
         existTask.setDescription(task.getDescription());
         existTask.setStatus(task.getStatus());
         existTask.setPriority(task.getPriority());
         existTask.setDeadline(task.getDeadline());
 
-        if (task.getOwner() != null && task.getOwner().getId() != null && !task.getOwner().getId().equals(existTask.getOwner().getId())) {
+        if (!existTask.getOwner().getId().equals(finalOwner.getId())) {
 
-            User newOwner = userDao.getById(task.getOwner().getId());
-            if (newOwner == null) {
-                throw new EntityNotFoundException("User with id " + task.getOwner().getId() + " does not exist");
-            }
             User oldOwner = existTask.getOwner();
             oldOwner.removeTask(existTask);
-            newOwner.addTask(existTask);
+            finalOwner.addTask(existTask);
         }
 
         return existTask;
     }
+
 
     @Override
     public void deleteTaskById(Long id) {
