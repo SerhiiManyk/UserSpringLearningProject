@@ -42,9 +42,19 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Task> findAllUserTasks() {
+    public List<Task> findAllUserTasks(Long userId) {
+
         User currentUser = getCurrentUser();
-        return taskDao.findByOwnerId(currentUser.getId());
+
+        boolean isAdmin = currentUser.getUserRole() == UserRole.ADMINISTRATOR;
+
+        boolean isOwner = currentUser.getId().equals(userId);
+
+        if (!isAdmin && !isOwner) {
+            throw new AccessDeniedException("Forbidden");
+        }
+
+        return taskDao.findByOwnerId(userId);
     }
 
     @Override

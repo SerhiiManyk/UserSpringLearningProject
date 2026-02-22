@@ -119,13 +119,14 @@ public class TaskServiceImplTest {
     @Test
     public void findAllUserTasksShouldReturnAllTasksForCurrentUser() {
         User currentUser = setupSecurityContextForUser("test@mail.com");
+        Long userId = currentUser.getId();
         List<Task> tasks = new ArrayList<>();
         tasks.add(createSampleTask());
         tasks.add(createSampleTask());
 
         when(taskDao.findByOwnerId(currentUser.getId())).thenReturn(tasks);
 
-        List<Task> resultList = taskServiceImpl.findAllUserTasks();
+        List<Task> resultList = taskServiceImpl.findAllUserTasks(userId);
 
         assertEquals(2, resultList.size());
         assertEquals(tasks, resultList);
@@ -137,10 +138,11 @@ public class TaskServiceImplTest {
     public void findAllUserTasksShouldReturnEmptyListWhenUserHasNoTasks() {
 
         User currentUser = setupSecurityContextForUser("test@mail.com");
+        Long userId = currentUser.getId();
 
         when(taskDao.findByOwnerId(currentUser.getId())).thenReturn(Collections.emptyList());
 
-        List<Task> result = taskServiceImpl.findAllUserTasks();
+        List<Task> result = taskServiceImpl.findAllUserTasks(userId);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

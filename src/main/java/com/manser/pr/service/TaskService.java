@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface TaskService {
 
-    List<Task> findAllUserTasks();
+    List<Task> findAllUserTasks(Long userId);
 
     List<Task> findAllTasks();
 

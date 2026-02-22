@@ -168,13 +168,11 @@ public class TaskController {
 
     @GetMapping("/users/{userId}/tasks")
     public String listTasks(@PathVariable Long userId,
-                            Model model,
-                            Principal principal) {
-        checkAccess(userId, principal);
+                            Model model) {
 
         model.addAttribute("tasks",
-                taskService.getTaskForEdit(userId));
-        return "/users/" + userId + "/tasks";
+                taskService.findAllUserTasks(userId));
+        return "tasks";
     }
 
     private void checkAccess(Long userId, Principal principal) {
