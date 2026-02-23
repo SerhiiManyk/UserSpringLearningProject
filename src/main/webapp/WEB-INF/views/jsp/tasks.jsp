@@ -56,20 +56,9 @@
                         <td>${task.id}</td>
                         <td>${task.title}</td>
                         <td>${task.description}</td>
-                        <td>
-                            <fmt:formatDate value="${task.createdAt}"
-                                            pattern="yyyy-MM-dd HH:mm"/>
-                        </td>
-
-                        <td>
-                            <fmt:formatDate value="${task.updatedAt}"
-                                            pattern="yyyy-MM-dd HH:mm"/>
-                        </td>
-
-                        <td>
-                            <fmt:formatDate value="${task.deadline}"
-                                            pattern="yyyy-MM-dd"/>
-                        </td>
+                        <td>${task.createdAtFormatted}</td>
+                        <td>${task.updatedAtFormatted}</td>
+                        <td>${task.deadlineFormatted}</td>
                         <td>
                             <c:out value="${task.owner != null ? task.owner.name : '-'}"/>
                         </td>

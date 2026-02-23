@@ -149,6 +149,21 @@ public class Task {
         this.priority = priority;
     }
 
+    public String getCreatedAtFormatted() {
+        if (createdAt == null) return "";
+        return createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    }
+
+    public String getUpdatedAtFormatted() {
+        if (updatedAt == null) return "";
+        return updatedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    }
+
+    public String getDeadlineFormatted() {
+        if (deadline == null) return "";
+        return deadline.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
     @Override
     public String toString() {
         return "Task{" +

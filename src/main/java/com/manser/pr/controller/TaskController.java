@@ -159,6 +159,7 @@ public class TaskController {
 
         model.addAttribute("tasks",
                 taskService.findAllUserTasks(userId));
+        model.addAttribute("userId", userId);
         return "tasks";
     }
 }
