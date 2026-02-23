@@ -28,10 +28,7 @@ public class TaskDaoImpl implements TaskDao {
     @Override
     public List<Task> findByOwnerId(Long ownerId) {
         return getSession()
-                .createQuery(
-                        "FROM Task t WHERE t.owner.id = :ownerId",
-                        Task.class
-                )
+                .createQuery("FROM Task t JOIN FETCH t.owner WHERE t.owner.id = :ownerId", Task.class)
                 .setParameter("ownerId", ownerId)
                 .getResultList();
     }
@@ -120,7 +117,7 @@ public class TaskDaoImpl implements TaskDao {
     @Override
     public List<Task> getAll() {
         return getSession()
-                .createQuery("FROM Task", Task.class)
+                .createQuery("FROM Task t JOIN FETCH t.owner", Task.class)
                 .getResultList();
     }
 }

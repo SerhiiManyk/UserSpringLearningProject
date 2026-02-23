@@ -1,6 +1,8 @@
 package com.manser.pr.controller;
 
+import com.manser.pr.domain.Priority;
 import com.manser.pr.domain.Task;
+import com.manser.pr.domain.TaskStatus;
 import com.manser.pr.exception.TaskAlreadyExistException;
 import com.manser.pr.service.TaskService;
 import com.manser.pr.service.UserService;
@@ -50,6 +52,8 @@ public class TaskController {
 
         if (result.hasErrors()) {
             model.addAttribute("edit", false);
+            model.addAttribute("statuses", TaskStatus.values());
+            model.addAttribute("priorities", Priority.values());
             return "taskCreating";
         }
 

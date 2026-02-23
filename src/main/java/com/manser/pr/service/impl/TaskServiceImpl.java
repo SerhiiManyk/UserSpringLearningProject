@@ -108,7 +108,7 @@ public class TaskServiceImpl implements TaskService {
         }
 
         owner.addTask(task);
-
+        taskDao.save(task);
         return task;
     }
 
