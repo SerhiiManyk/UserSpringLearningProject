@@ -110,7 +110,7 @@
                             </c:choose>
                         </button>
 
-                        <a href="<c:url value='/tasks'/>"
+                        <a href="<c:url value='/users/${task.owner.id}/tasks'/>"
                            class="btn btn-default">
                             Cancel
                         </a>

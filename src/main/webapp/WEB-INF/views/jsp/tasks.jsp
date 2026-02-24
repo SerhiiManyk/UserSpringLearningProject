@@ -98,6 +98,22 @@
                 </tbody>
             </table>
 
+            <div class="clearfix" style="margin-top: 20px;">
+
+                <!-- Back to users -->
+                <a href="<c:url value='/users'/>"
+                   class="btn btn-default pull-left">
+                    Back to users
+                </a>
+
+                <!-- Create new task -->
+                <a href="<c:url value='/users/${userId}/tasks/new'/>"
+                   class="btn btn-success pull-right">
+                    Create new task
+                </a>
+
+            </div>
+
         </div>
     </div>
 </div>
