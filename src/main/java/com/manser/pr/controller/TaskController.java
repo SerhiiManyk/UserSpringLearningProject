@@ -1,8 +1,6 @@
 package com.manser.pr.controller;
 
-import com.manser.pr.domain.Priority;
-import com.manser.pr.domain.Task;
-import com.manser.pr.domain.TaskStatus;
+import com.manser.pr.domain.*;
 import com.manser.pr.exception.TaskAlreadyExistException;
 import com.manser.pr.service.TaskService;
 import com.manser.pr.service.UserService;
@@ -31,8 +29,21 @@ public class TaskController {
 
     @GetMapping("/users/{userId}/tasks/new")
     public String newTask(@PathVariable Long userId,
-                          Model model) {
+                          Model model,
+                          RedirectAttributes redirectAttributes) {
 
+        User currentUser = userService.getCurrentUser();
+
+        boolean isAdmin = currentUser.getUserRole() == UserRole.ADMINISTRATOR;
+        boolean isOwner = currentUser.getId().equals(userId);
+
+        if (!isAdmin && !isOwner) {
+            redirectAttributes.addFlashAttribute(
+                    "alertMessage",
+                    "You cannot create tasks for another user."
+            );
+            return "redirect:/access-denied";
+        }
         Task task = new Task();
         task.setOwner(userService.getById(userId));
 
