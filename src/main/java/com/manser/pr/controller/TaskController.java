@@ -27,6 +27,14 @@ public class TaskController {
         this.userService = userService;
     }
 
+    private void prepareTaskForm(Model model, Long userId, boolean edit,Task task) {
+        model.addAttribute("edit", edit);
+        model.addAttribute("statuses", TaskStatus.values());
+        model.addAttribute("priorities", Priority.values());
+        model.addAttribute("userId", userId);
+        model.addAttribute("task", task);
+    }
+
     @GetMapping("/users/{userId}/tasks/new")
     public String newTask(@PathVariable Long userId,
                           Model model,
@@ -47,10 +55,7 @@ public class TaskController {
         Task task = new Task();
         task.setOwner(userService.getById(userId));
 
-        model.addAttribute("task", task);
-        model.addAttribute("edit", false);
-        model.addAttribute("statuses", com.manser.pr.domain.TaskStatus.values());
-        model.addAttribute("priorities", com.manser.pr.domain.Priority.values());
+        prepareTaskForm(model, userId, false,task);
         return "taskCreating";
     }
 
@@ -62,9 +67,7 @@ public class TaskController {
                              Model model) {
 
         if (result.hasErrors()) {
-            model.addAttribute("edit", false);
-            model.addAttribute("statuses", TaskStatus.values());
-            model.addAttribute("priorities", Priority.values());
+            prepareTaskForm(model, userId, false,task);
             return "taskCreating";
         }
 
@@ -77,11 +80,11 @@ public class TaskController {
                     "Task created successfully");
         } catch (TaskAlreadyExistException e) {
             result.rejectValue("title", "task.exists", e.getMessage());
-            model.addAttribute("edit", false);
+            prepareTaskForm(model, userId, false,task);
             return "taskCreating";
         } catch (IllegalArgumentException e) {
             result.reject("task.invalid", e.getMessage());
-            model.addAttribute("edit", false);
+            prepareTaskForm(model, userId, false,task);
             return "taskCreating";
         }
         return "redirect:/users/" + userId + "/tasks";
@@ -93,10 +96,7 @@ public class TaskController {
                            Model model) {
         try {
             Task task = taskService.getTaskForEdit(taskId);
-            model.addAttribute("task", task);
-            model.addAttribute("edit", true);
-            model.addAttribute("statuses", com.manser.pr.domain.TaskStatus.values());
-            model.addAttribute("priorities", com.manser.pr.domain.Priority.values());
+            prepareTaskForm(model, userId, true,task);
             return "taskCreating";
         } catch (EntityNotFoundException e) {
             return "redirect:/users/" + userId + "/tasks";
@@ -116,7 +116,7 @@ public class TaskController {
         task.setId(taskId);
 
         if (result.hasErrors()) {
-            model.addAttribute("edit", true);
+            prepareTaskForm(model, userId, true,task);
             return "taskCreating";
         }
 
@@ -125,7 +125,7 @@ public class TaskController {
             updatedTask = taskService.updateTask(task);
         } catch (TaskAlreadyExistException e) {
             result.rejectValue("title", "task.exists", e.getMessage());
-            model.addAttribute("edit", true);
+            prepareTaskForm(model, userId, true,task);
             return "taskCreating";
         } catch (AccessDeniedException e) {
             return "redirect:/access-denied";
