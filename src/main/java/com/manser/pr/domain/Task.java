@@ -4,6 +4,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -43,10 +44,12 @@ public class Task {
     @JoinColumn(name = "USER_ID", nullable = false)
     private User owner;
 
+    @NotNull(message = "{NotNull.task.status}")
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS", nullable = false)
     private TaskStatus status;
 
+    @NotNull(message = "{NotNull.task.priority}")
     @Enumerated(EnumType.STRING)
     @Column(name = "PRIORITY", nullable = false)
     private Priority priority;

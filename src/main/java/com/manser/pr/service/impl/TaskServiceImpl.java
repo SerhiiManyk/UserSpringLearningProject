@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 
@@ -105,6 +107,12 @@ public class TaskServiceImpl implements TaskService {
 
         if (exists) {
             throw new TaskAlreadyExistException("Task with this title already exists");
+        }
+
+        if (task.getDeadline() == null) {
+            task.setDeadline(
+                    LocalDateTime.now(ZoneId.of("Europe/Kyiv")).plusDays(14)
+            );
         }
 
         owner.addTask(task);

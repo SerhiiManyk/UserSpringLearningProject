@@ -65,14 +65,12 @@ public class TaskController {
                              BindingResult result,
                              RedirectAttributes redirectAttributes,
                              Model model) {
+        task.setOwner(userService.getById(userId));
 
         if (result.hasErrors()) {
             prepareTaskForm(model, userId, false,task);
             return "taskCreating";
         }
-
-        task.setOwner(userService.getById(userId));
-
         try {
             taskService.createTask(task);
             redirectAttributes.addFlashAttribute(
