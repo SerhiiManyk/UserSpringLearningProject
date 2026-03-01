@@ -75,7 +75,8 @@
 
                         <!-- DELETE (only for authorized users) -->
                         <td>
-                            <sec:authorize access="hasRole('ADMINISTRATOR') or principal.username == task.owner.email">
+                            <c:if test="${pageContext.request.isUserInRole('ADMINISTRATOR')
+                                         or pageContext.request.userPrincipal.name == task.owner.email}">
                                 <form action="<c:url value='/users/${userId}/tasks/${task.id}/delete'/>"
                                       method="post"
                                       style="display:inline;">
@@ -91,7 +92,7 @@
                                 </button>
 
                                 </form>
-                            </sec:authorize>
+                            </c:if>
                         </td>
                     </tr>
                 </c:forEach>

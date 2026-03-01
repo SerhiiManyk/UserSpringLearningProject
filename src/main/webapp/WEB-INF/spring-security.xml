@@ -19,6 +19,8 @@
                     default-target-url="/users"/>
 
         <logout logout-url="/logout"/>
+
+        <access-denied-handler error-page="/accessDenied"/>
     </http>
 
     <authentication-manager>

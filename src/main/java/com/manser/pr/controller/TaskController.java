@@ -155,15 +155,9 @@ public class TaskController {
         return "redirect:/users/" + task.getOwner().getId() + "/tasks";
     }
 
-    @GetMapping("/access-denied")
-    public String accessDenied(RedirectAttributes redirectAttributes) {
-        redirectAttributes.addFlashAttribute(
-                "alertMessage",
-                "You do not have permission to perform this action."
-        );
-        redirectAttributes.addFlashAttribute("backUrl", "/users");
-        redirectAttributes.addFlashAttribute("backLabel", "Back to tasks");
-        return "redirect:/successfull";
+    @GetMapping("/accessDenied")
+    public String accessDeniedPage() {
+        return "accessDenied";
     }
 
     @GetMapping("/users/{userId}/tasks")
