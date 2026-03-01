@@ -40,7 +40,7 @@
                 </c:when>
                 <c:otherwise>
                     <c:url var="formAction"
-                           value="/users/${task.owner.id}/tasks" />
+                           value="/users/${userId}/tasks" />
                 </c:otherwise>
             </c:choose>
 
@@ -48,6 +48,10 @@
                        modelAttribute="task"
                        action="${formAction}"
                        cssClass="form-horizontal">
+
+                <input type="hidden"
+                       name="${_csrf.parameterName}"
+                       value="${_csrf.token}"/>
 
                 <!-- TITLE -->
                 <div class="form-group">

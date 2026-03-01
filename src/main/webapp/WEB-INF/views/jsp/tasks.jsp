@@ -75,7 +75,7 @@
 
                         <!-- DELETE (only for authorized users) -->
                         <td>
-                            <sec:authorize access="hasRole('ADMINISTRATOR')">
+                            <sec:authorize access="hasRole('ADMINISTRATOR') or principal.username == task.owner.email">
                                 <form action="<c:url value='/users/${userId}/tasks/${task.id}/delete'/>"
                                       method="post"
                                       style="display:inline;">
