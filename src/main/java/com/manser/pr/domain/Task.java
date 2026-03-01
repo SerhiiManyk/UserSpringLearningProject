@@ -3,6 +3,7 @@ package com.manser.pr.domain;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -38,6 +39,7 @@ public class Task {
 
     @Column(name = "DEADLINE", nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @FutureOrPresent(message = "Deadline cannot be in the past")
     private LocalDateTime deadline;
 
     @ManyToOne(fetch = FetchType.LAZY)
