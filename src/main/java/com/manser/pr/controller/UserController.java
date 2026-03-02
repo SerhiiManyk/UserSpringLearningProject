@@ -1,9 +1,6 @@
 package com.manser.pr.controller;
 
-import com.manser.pr.domain.SortField;
-import com.manser.pr.domain.SortOrder;
-import com.manser.pr.domain.User;
-import com.manser.pr.domain.UserRole;
+import com.manser.pr.domain.*;
 import com.manser.pr.exception.UserAlreadyExistsException;
 import com.manser.pr.service.TaskService;
 import com.manser.pr.service.UserService;
@@ -145,6 +142,24 @@ public class UserController {
             List<User> users = (sortField != null)
                     ? userService.getAllSorted(sortField, sortOrder)
                     : userService.getAll();
+
+            for (User user : users) {
+                boolean overdue = false;
+                boolean dueSoon = false;
+
+                if (user.getTasks() != null) {
+                    for (Task task : user.getTasks()) {
+                        if (task.isOverdue()) {
+                            overdue = true;
+                        } else if (task.isDueSoon()) {
+                            dueSoon = true;
+                        }
+                    }
+                }
+
+                user.setHasOverdueTasks(overdue);
+                user.setHasDueSoonTasks(dueSoon);
+            }
 
             model.addAttribute("users", users);
             model.addAttribute("taskCounts", buildTaskCountMap());

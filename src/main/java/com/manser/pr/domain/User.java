@@ -42,6 +42,10 @@ public class User {
     @Column(name = "USER_ROLE")
     private UserRole userRole;
 
+    private boolean hasOverdueTasks;
+
+    private boolean hasDueSoonTasks;
+
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks = new ArrayList<>();
 
@@ -118,6 +122,20 @@ public class User {
         tasks.remove(task);
         task.setOwner(null);
     }
+
+    public boolean hasOverdueTasks() {
+        return tasks.stream().anyMatch(Task::isOverdue);
+    }
+
+    public boolean hasDueSoonTasks() {
+        return tasks.stream().anyMatch(Task::isDueSoon);
+    }
+
+    public boolean isHasOverdueTasks() { return hasOverdueTasks; }
+    public void setHasOverdueTasks(boolean hasOverdueTasks) { this.hasOverdueTasks = hasOverdueTasks; }
+
+    public boolean isHasDueSoonTasks() { return hasDueSoonTasks; }
+    public void setHasDueSoonTasks(boolean hasDueSoonTasks) { this.hasDueSoonTasks = hasDueSoonTasks; }
 
     @Override
     public String toString() {
