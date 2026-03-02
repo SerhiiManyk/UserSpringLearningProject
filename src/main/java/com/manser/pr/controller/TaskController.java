@@ -169,5 +169,13 @@ public class TaskController {
         model.addAttribute("userId", userId);
         return "tasks";
     }
+
+    @GetMapping("/users/tasks")
+    public String listTasksForAllUsers(Model model) {
+
+        model.addAttribute("tasks",
+                taskService.findAllTasks());
+        return "tasks";
+    }
 }
 

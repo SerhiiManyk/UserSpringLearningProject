@@ -120,6 +120,16 @@
           </a>
       </sec:authorize>
 
+      <sec:authorize access="hasRole('ROLE_ADMINISTRATOR')">
+
+          <a href="<c:url value='/users/tasks'/>"
+             class="btn btn-info btn-sm"
+             style="margin-left:10px;">
+              View All Tasks
+          </a>
+
+      </sec:authorize>
+
                    <!-- Панель пошуку -->
                    <form method="get" action="<c:url value='/users/search'/>" class="pull-right form-inline">
                        <select name="sortField" class="form-control input-sm">
