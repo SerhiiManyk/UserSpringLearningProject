@@ -169,6 +169,15 @@ public class Task {
         return deadline.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
+    public boolean isOverdue() {
+        return deadline.isBefore(LocalDateTime.now());
+    }
+
+    public boolean isDueSoon() {
+        return !isOverdue() &&
+                deadline.isBefore(LocalDateTime.now().plusDays(1));
+    }
+
     @Override
     public String toString() {
         return "Task{" +
