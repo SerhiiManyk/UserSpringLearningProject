@@ -42,8 +42,10 @@ public class User {
     @Column(name = "USER_ROLE")
     private UserRole userRole;
 
+    @Transient
     private boolean hasOverdueTasks;
 
+    @Transient
     private boolean hasDueSoonTasks;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
