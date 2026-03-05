@@ -170,12 +170,23 @@ public class Task {
     }
 
     public boolean isOverdue() {
-        return deadline.isBefore(LocalDateTime.now());
+        if (deadline == null) {
+            return false;
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        return deadline.isBefore(now);
     }
 
     public boolean isDueSoon() {
-        return !isOverdue() &&
-                deadline.isBefore(LocalDateTime.now().plusDays(1));
+        if (deadline == null) {
+            return false;
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+
+        return !deadline.isBefore(now) &&
+                deadline.isBefore(now.plusDays(1));
     }
 
     @Override

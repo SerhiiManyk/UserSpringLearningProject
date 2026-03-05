@@ -52,9 +52,7 @@
                 </c:if>
 
                 <c:forEach items="${tasks}" var="task">
-                    <tr class="
-                        ${task.overdue ? 'table-danger' :
-                         (task.dueSoon ? 'table-warning' : '')}">
+                    <tr class="${task.overdue ? 'danger' : (task.dueSoon ? 'warning' : '')}">
 
                         <td>${task.id}</td>
                         <td>${task.title}</td>

@@ -58,7 +58,7 @@
             </thead>
             <tbody>
             <c:forEach items="${users}" var="user">
-                <tr class="${user.hasOverdueTasks ? 'table-danger' : (user.hasDueSoonTasks ? 'table-warning' : '')}">
+                <tr class="${user.hasOverdueTasks ? 'danger' : (user.hasDueSoonTasks ? 'warning' : '')}">
                     <td>${user.id}</td>
                     <td>${user.name}</td>
                     <td>${user.email}</td>
