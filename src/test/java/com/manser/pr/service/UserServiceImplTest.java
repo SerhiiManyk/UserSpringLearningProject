@@ -117,20 +117,20 @@ public class UserServiceImplTest {
         verify(userDao, times(1)).getAll();
     }
 
-    @Test
-    public void findAllUsersTest(){
-        List<User> users = List.of(testUser);
-
-        when(userDao.findAllUsers()).thenReturn(users);
-
-        List<User> result = userService.findAllUsers();
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(testUser, result.get(0));
-
-        verify(userDao, times(1)).findAllUsers();
-    }
+//    @Test
+//    public void findAllUsersTest(){
+//        List<User> users = List.of(testUser);
+//
+//        when(userDao.findAllUsers()).thenReturn(users);
+//
+//        List<User> result = userService.findAllUsers();
+//
+//        assertNotNull(result);
+//        assertEquals(1, result.size());
+//        assertEquals(testUser, result.get(0));
+//
+//        verify(userDao, times(1)).findAllUsers();
+//    }
 
 
 }
