@@ -68,7 +68,7 @@
 
                         <!-- EDIT -->
                         <td>
-                            <a href="<c:url value='/users/${userId}/tasks/${task.id}/edit'/>"
+                            <a href="<c:url value='/users/${task.owner.id}/tasks/${task.id}/edit'/>"
                                class="btn btn-xs btn-primary">
                                 Edit
                             </a>
