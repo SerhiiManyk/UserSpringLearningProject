@@ -68,10 +68,11 @@
 
                         <!-- EDIT -->
                         <td>
-                            <a href="<c:url value='/users/${task.owner.id}/tasks/${task.id}/edit'/>"
-                               class="btn btn-xs btn-primary">
-                                Edit
-                            </a>
+                            <c:if test="${task.owner != null}">
+                                <a href="<c:url value='/users/${task.owner.id}/tasks/${task.id}/edit'/>" class="btn btn-xs btn-primary">
+                                    Edit
+                                </a>
+                            </c:if>
                         </td>
 
                         <!-- DELETE (only for authorized users) -->
@@ -109,10 +110,26 @@
                 </a>
 
                 <!-- Create new task -->
-                <a href="<c:url value='/users/${userId}/tasks/new'/>"
-                   class="btn btn-success pull-right">
-                    Create new task
-                </a>
+                <c:choose>
+
+                    <c:when test="${currentUser.userRole != 'ADMINISTRATOR'}">
+                        <a href="<c:url value='/users/${userId}/tasks/new'/>"
+                           class="btn btn-success pull-right">
+                            Create new task
+                        </a>
+                    </c:when>
+
+                    <c:otherwise>
+                        <form method="get" action="<c:url value='/users/tasks/new'/>" class="pull-right form-inline">
+                            <select name="selectedUserId" class="form-control input-sm" required>
+                                <c:forEach items="${allUsers}" var="user">
+                                    <option value="${user.id}">${user.name} (${user.email})</option>
+                                </c:forEach>
+                            </select>
+                            <button type="submit" class="btn btn-success btn-sm">Create new task</button>
+                        </form>
+                    </c:otherwise>
+                </c:choose>
 
             </div>
 

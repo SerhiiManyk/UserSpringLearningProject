@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.EntityNotFoundException;
@@ -35,57 +36,93 @@ public class TaskController {
         model.addAttribute("task", task);
     }
 
-    @GetMapping("/users/{userId}/tasks/new")
-    public String newTask(@PathVariable Long userId,
-                          Model model,
-                          RedirectAttributes redirectAttributes) {
+    @GetMapping({"/users/tasks/new", "/users/{userId}/tasks/new"})
+    public String createTaskForm(
+            @PathVariable(required = false) Long userId,
+            @RequestParam(required = false) Long selectedUserId,
+            Model model,
+            RedirectAttributes redirectAttributes) {
 
         User currentUser = userService.getCurrentUser();
+        User taskOwner;
 
-        boolean isAdmin = currentUser.getUserRole() == UserRole.ADMINISTRATOR;
-        boolean isOwner = currentUser.getId().equals(userId);
+        if (userId != null) {
 
-        if (!isAdmin && !isOwner) {
-            redirectAttributes.addFlashAttribute(
-                    "alertMessage",
-                    "You cannot create tasks for another user."
-            );
-            return "redirect:/access-denied";
+            if (!currentUser.getUserRole().equals(UserRole.ADMINISTRATOR) &&
+                    !currentUser.getId().equals(userId)) {
+                redirectAttributes.addFlashAttribute(
+                        "alertMessage",
+                        "You cannot create tasks for another user."
+                );
+                return "redirect:/accessDenied";
+            }
+            taskOwner = userService.getById(userId);
+        } else {
+
+            if (currentUser.getUserRole().equals(UserRole.ADMINISTRATOR) && selectedUserId != null) {
+                taskOwner = userService.getById(selectedUserId);
+            } else {
+
+                taskOwner = currentUser;
+            }
         }
-        Task task = new Task();
-        task.setOwner(userService.getById(userId));
 
-        prepareTaskForm(model, userId, false,task);
+        Task newTask = new Task();
+        newTask.setOwner(taskOwner);
+
+        prepareTaskForm(model, taskOwner.getId(), false, newTask);
+
         return "taskCreating";
     }
 
-    @PostMapping("/users/{userId}/tasks")
-    public String createTask(@PathVariable Long userId,
-                             @Valid Task task,
-                             BindingResult result,
-                             RedirectAttributes redirectAttributes,
-                             Model model) {
-        task.setOwner(userService.getById(userId));
+    @PostMapping({"/users/tasks", "/users/{userId}/tasks"})
+    public String createTask(
+            @PathVariable(required = false) Long userId,
+            @RequestParam(required = false) Long selectedUserId,
+            @Valid Task task,
+            BindingResult result,
+            RedirectAttributes redirectAttributes,
+            Model model) {
+
+        User currentUser = userService.getCurrentUser();
+        User taskOwner;
+
+        if (userId != null) {
+
+            if (!currentUser.getUserRole().equals(UserRole.ADMINISTRATOR) &&
+                    !currentUser.getId().equals(userId)) {
+                return "redirect:/accessDenied";
+            }
+            taskOwner = userService.getById(userId);
+        } else {
+
+            taskOwner = currentUser;
+            if (currentUser.getUserRole().equals(UserRole.ADMINISTRATOR) && selectedUserId != null) {
+                taskOwner = userService.getById(selectedUserId);
+            }
+        }
+
+        task.setOwner(taskOwner);
 
         if (result.hasErrors()) {
-            prepareTaskForm(model, userId, false,task);
+            prepareTaskForm(model, taskOwner.getId(), false, task);
             return "taskCreating";
         }
+
         try {
             taskService.createTask(task);
-            redirectAttributes.addFlashAttribute(
-                    "success",
-                    "Task created successfully");
+            redirectAttributes.addFlashAttribute("success", "Task created successfully");
         } catch (TaskAlreadyExistException e) {
             result.rejectValue("title", "task.exists", e.getMessage());
-            prepareTaskForm(model, userId, false,task);
+            prepareTaskForm(model, taskOwner.getId(), false, task);
             return "taskCreating";
         } catch (IllegalArgumentException e) {
             result.reject("task.invalid", e.getMessage());
-            prepareTaskForm(model, userId, false,task);
+            prepareTaskForm(model, taskOwner.getId(), false, task);
             return "taskCreating";
         }
-        return "redirect:/users/" + userId + "/tasks";
+
+        return "redirect:/users/" + taskOwner.getId() + "/tasks";
     }
 
     @GetMapping("/users/{userId}/tasks/{taskId}/edit")
@@ -175,7 +212,15 @@ public class TaskController {
 
         model.addAttribute("tasks",
                 taskService.findAllTasks());
+
+        User currentUser = userService.getCurrentUser();
+        model.addAttribute("userId", currentUser.getId());
+
+        if (currentUser.getUserRole() == UserRole.ADMINISTRATOR) {
+            model.addAttribute("allUsers", userService.getAll());
+        }
         return "tasks";
     }
+
 }
 
