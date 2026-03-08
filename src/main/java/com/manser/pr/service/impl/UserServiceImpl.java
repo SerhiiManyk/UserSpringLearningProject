@@ -25,11 +25,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findAllUsers() {
-        return userDao.getAll();
-    }
-
-    @Override
     public Long save(User entity) {
 
         return userDao.save(entity);
