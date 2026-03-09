@@ -53,6 +53,20 @@
                        name="${_csrf.parameterName}"
                        value="${_csrf.token}"/>
 
+                <c:if test="${currentUser.userRole == 'ADMINISTRATOR'}">
+                    <div class="form-group">
+                        <label>User</label>
+                        <select name="selectedUserId" class="form-control" required>
+                            <c:forEach items="${allUsers}" var="user">
+                                <option value="${user.id}"
+                                        <c:if test="${user.id == userId}">selected</c:if>>
+                                    ${user.name} (${user.email})
+                                </option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </c:if>
+
                 <!-- TITLE -->
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Title</label>

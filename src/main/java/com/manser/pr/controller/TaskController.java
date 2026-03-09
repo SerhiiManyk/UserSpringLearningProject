@@ -34,6 +34,13 @@ public class TaskController {
         model.addAttribute("priorities", Priority.values());
         model.addAttribute("userId", userId);
         model.addAttribute("task", task);
+
+        User currentUser = userService.getCurrentUser();
+        model.addAttribute("currentUser", currentUser);
+
+        if (currentUser.getUserRole() == UserRole.ADMINISTRATOR) {
+            model.addAttribute("allUsers", userService.getAll());
+        }
     }
 
     @GetMapping({"/users/tasks/new", "/users/{userId}/tasks/new"})
@@ -87,19 +94,23 @@ public class TaskController {
         User currentUser = userService.getCurrentUser();
         User taskOwner;
 
-        if (userId != null) {
+        if (currentUser.getUserRole() == UserRole.ADMINISTRATOR) {
 
-            if (!currentUser.getUserRole().equals(UserRole.ADMINISTRATOR) &&
-                    !currentUser.getId().equals(userId)) {
-                return "redirect:/accessDenied";
+            if (selectedUserId != null) {
+                taskOwner = userService.getById(selectedUserId);
+            } else if (userId != null) {
+                taskOwner = userService.getById(userId);
+            } else {
+                taskOwner = currentUser;
             }
-            taskOwner = userService.getById(userId);
+
         } else {
 
-            taskOwner = currentUser;
-            if (currentUser.getUserRole().equals(UserRole.ADMINISTRATOR) && selectedUserId != null) {
-                taskOwner = userService.getById(selectedUserId);
+            if (userId != null && !userId.equals(currentUser.getId())) {
+                return "redirect:/accessDenied";
             }
+
+            taskOwner = currentUser;
         }
 
         task.setOwner(taskOwner);
