@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <html>
 <head>
@@ -19,7 +20,11 @@
 
         <!-- PANEL HEADER -->
         <div class="panel-heading clearfix">
-            <h3 class="panel-title pull-left">List of Tasks</h3>
+            <h3>
+            Tasks of
+            <span class="task-owner">${taskOwner.name}</span>
+            <span class="badge">${fn:length(tasks)}</span>
+            </h3>
         </div>
 
         <!-- PANEL BODY -->

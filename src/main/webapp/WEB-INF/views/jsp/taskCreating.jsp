@@ -24,9 +24,15 @@
         <div class="panel-heading">
             <h3 class="panel-title">
                 <c:choose>
-                    <c:when test="${edit}">Edit Task</c:when>
-                    <c:otherwise>Create New Task</c:otherwise>
+                    <c:when test="${edit}">
+                        Edit Task for
+                    </c:when>
+                    <c:otherwise>
+                        Create Task for
+                    </c:otherwise>
                 </c:choose>
+
+                <span class="task-owner">${taskOwner.name}</span>
             </h3>
         </div>
 

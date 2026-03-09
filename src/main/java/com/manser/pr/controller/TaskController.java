@@ -29,6 +29,10 @@ public class TaskController {
     }
 
     private void prepareTaskForm(Model model, Long userId, boolean edit,Task task) {
+
+        User user = userService.getById(userId);
+
+        model.addAttribute("taskOwner", user);
         model.addAttribute("edit", edit);
         model.addAttribute("statuses", TaskStatus.values());
         model.addAttribute("priorities", Priority.values());
@@ -212,9 +216,12 @@ public class TaskController {
     public String listTasks(@PathVariable Long userId,
                             Model model) {
 
+        User taskOwner = userService.getById(userId);
+
         model.addAttribute("tasks",
                 taskService.findAllUserTasks(userId));
         model.addAttribute("userId", userId);
+        model.addAttribute("taskOwner", taskOwner);
         return "tasks";
     }
 
