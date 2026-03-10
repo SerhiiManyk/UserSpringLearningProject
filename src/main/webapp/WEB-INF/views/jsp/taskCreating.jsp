@@ -42,7 +42,7 @@
             <c:choose>
                 <c:when test="${edit}">
                     <c:url var="formAction"
-                           value="/users/${task.owner.id}/tasks/${task.id}" />
+                           value="/users/${taskOwner.id}/tasks/${task.id}" />
                 </c:when>
                 <c:otherwise>
                     <c:url var="formAction"
@@ -58,6 +58,8 @@
                 <input type="hidden"
                        name="${_csrf.parameterName}"
                        value="${_csrf.token}"/>
+
+                <form:hidden path="owner.id"/>
 
                 <c:if test="${currentUser.userRole == 'ADMINISTRATOR'}">
                     <div class="form-group">
@@ -134,7 +136,7 @@
                             </c:choose>
                         </button>
 
-                        <a href="<c:url value='/users/${task.owner.id}/tasks'/>"
+                        <a href="<c:url value='/users/${taskOwner.id}/tasks'/>"
                            class="btn btn-default">
                             Cancel
                         </a>

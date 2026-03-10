@@ -72,3 +72,41 @@ body, .form-control{
     font-weight: 500;
     font-size: 13px;
 }
+
+.panel-title i,
+h3 i {
+    margin-right: 8px;
+    color: #0d6efd;
+}
+
+.priority-text {
+    text-transform: capitalize;
+}
+
+.btn i,
+h3 i {
+    margin-right: 6px;
+}
+
+.status-badge{
+    padding:4px 8px;
+    border-radius:6px;
+    font-size:12px;
+    font-weight:600;
+}
+
+.status-TODO{
+    background:#d9edf7;
+}
+
+.status-IN_PROGRESS{
+    background:#fcf8e3;
+}
+
+.status-DONE{
+    background:#dff0d8;
+}
+
+table td{
+    vertical-align: middle;
+}

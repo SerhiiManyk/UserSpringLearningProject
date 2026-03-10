@@ -164,6 +164,7 @@ public class TaskController {
                              RedirectAttributes redirectAttributes,
                              Model model) {
         task.setId(taskId);
+        task.setOwner(userService.getById(userId));
 
         if (result.hasErrors()) {
             prepareTaskForm(model, userId, true,task);
