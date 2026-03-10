@@ -49,7 +49,7 @@
                 <tbody>
                 <c:if test="${empty tasks}">
                     <tr>
-                        <td colspan="11" class="text-center text-muted">
+                        <td colspan="10" class="text-center text-muted">
                             No tasks found
                         </td>
                     </tr>
@@ -66,7 +66,9 @@
                         <td>${task.description}</td>
                         <td>${task.createdAtFormatted}</td>
                         <td>${task.updatedAtFormatted}</td>
-                        <td>${task.deadlineFormatted}</td>
+                        <td class="${task.overdue ? 'text-danger' : (task.dueSoon ? 'text-warning' : '')}">
+                            ${task.deadlineFormatted}
+                        </td>
                         <td>
                             <c:out value="${task.owner != null ? task.owner.name : '-'}"/>
                         </td>
@@ -83,8 +85,9 @@
 
                         <!-- DELETE (only for authorized users) -->
                         <td>
-                            <c:if test="${pageContext.request.isUserInRole('ADMINISTRATOR')
-                                         or pageContext.request.userPrincipal.name == task.owner.email}">
+                            <c:if test="${task.owner != null and
+                                         (pageContext.request.isUserInRole('ADMINISTRATOR')
+                                         or pageContext.request.userPrincipal.name == task.owner.email)}">
                                 <form action="<c:url value='/users/${userId}/tasks/${task.id}/delete'/>"
                                       method="post"
                                       style="display:inline;">
