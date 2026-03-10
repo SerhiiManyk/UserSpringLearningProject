@@ -8,13 +8,17 @@
    <title>Users List</title>
    <link href="<c:url value='/resources/static/css/bootstrap.css'/>" rel="stylesheet">
    <link href="<c:url value='/resources/static/css/app.css'/>" rel="stylesheet">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 
 <body style="background-color: #e9f2ff;">
 <div class="generic-container">
     <div class="panel panel-default">
         <div class="panel-heading clearfix">
-            <h3 class="panel-title pull-left">List of Users</h3>
+            <h3 class="panel-title pull-left">
+                <i class="bi bi-people-fill" style="margin-right:8px;font-size:20px;"></i>
+                List of Users
+            </h3>
 
             <!-- Форма сортування -->
             <form method="get" action="<c:url value='/users'/>" class="pull-right form-inline">
