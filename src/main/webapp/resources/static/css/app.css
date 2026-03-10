@@ -45,3 +45,30 @@ body, .form-control{
     font-size: 12px;
     margin-left: 6px;
 }
+
+.priority-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+/* priority colors */
+
+.priority-LOW {
+    background-color: #0d6efd;   /* blue */
+}
+
+.priority-MEDIUM {
+    background-color: #ffc107;   /* yellow */
+}
+
+.priority-HIGH {
+    background-color: #fd7e14;   /* orange */
+}
+
+.priority-text {
+    font-weight: 500;
+    font-size: 13px;
+}

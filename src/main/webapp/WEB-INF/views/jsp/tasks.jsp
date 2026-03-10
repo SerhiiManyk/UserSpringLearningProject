@@ -33,7 +33,7 @@
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th>ID</th>
+                    <th width="120">PRIORITY</th>
                     <th>TITLE</th>
                     <th>DESCRIPTION</th>
                     <th>CREATE TIME</th>
@@ -41,7 +41,6 @@
                     <th>DEADLINE</th>
                     <th>OWNER</th>
                     <th>STATUS</th>
-                    <th>PRIORITY</th>
                     <th width="90"></th>
                     <th width="90"></th>
                 </tr>
@@ -59,7 +58,10 @@
                 <c:forEach items="${tasks}" var="task">
                     <tr class="${task.overdue ? 'danger' : (task.dueSoon ? 'warning' : '')}">
 
-                        <td>${task.id}</td>
+                        <td>
+                            <span class="priority-dot priority-${task.priority}"></span>
+                            <span class="priority-text">${task.priority}</span>
+                        </td>
                         <td>${task.title}</td>
                         <td>${task.description}</td>
                         <td>${task.createdAtFormatted}</td>
@@ -69,7 +71,6 @@
                             <c:out value="${task.owner != null ? task.owner.name : '-'}"/>
                         </td>
                         <td>${task.status}</td>
-                        <td>${task.priority}</td>
 
                         <!-- EDIT -->
                         <td>
