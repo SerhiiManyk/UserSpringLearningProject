@@ -8,6 +8,7 @@
 	<title>Welcome to User Spring Learning Project</title>
     <link rel="stylesheet" href="<c:url value='/resources/static/css/bootstrap.css'/>">
     <link rel="stylesheet" href="<c:url value='/resources/static/css/app.css'/>">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 
 <body style="background-color: #c3e6cb;">
@@ -27,11 +28,11 @@
      <div style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
          <a href="<c:url value='/newuser'/>"
             style="flex: 1; max-width: 150px; padding: 10px; text-align: center; color: white; background-color: #007bff; border-radius: 5px; text-decoration: none;">
-             Registration
+             <i class="bi bi-person-plus"></i> Registration
          </a>
          <a href="<c:url value='/login'/>"
             style="flex: 1; max-width: 150px; padding: 10px; text-align: center; color: white; background-color: #28a745; border-radius: 5px; text-decoration: none;">
-             LogIn
+             <i class="bi bi-box-arrow-in-right"></i> LogIn
          </a>
      </div>
 

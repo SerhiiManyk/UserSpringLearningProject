@@ -120,7 +120,7 @@
                 <!-- Back to users -->
                 <a href="<c:url value='/users'/>"
                    class="btn btn-default pull-left">
-                    Back to users
+                   <i class="bi bi-arrow-return-left"></i>Back to users
                 </a>
 
                 <!-- Create new task -->

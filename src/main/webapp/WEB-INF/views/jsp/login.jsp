@@ -8,6 +8,7 @@
 	<title>User Login Page</title>
     <link rel="stylesheet" href="<c:url value='/resources/static/css/bootstrap.css'/>">
     <link rel="stylesheet" href="<c:url value='/resources/static/css/app.css'/>">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 
 <body>
@@ -45,8 +46,8 @@
         <!-- BUTTONS -->
         <div class="row mb-3">
             <div class="col text-end">
-                <button type="submit" class="btn btn-primary btn-sm">Login</button>
-                <a href="<c:url value='/welcome'/>" class="btn btn-secondary btn-sm">Back</a>
+                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-box-arrow-in-right"></i>Login</button>
+                <a href="<c:url value='/welcome'/>" class="btn btn-secondary btn-sm"><i class="bi bi-arrow-return-left"></i> Back</a>
             </div>
         </div>
 

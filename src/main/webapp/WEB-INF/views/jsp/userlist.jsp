@@ -37,7 +37,7 @@
                     <option value="DESC">Descending</option>
                 </select>
 
-                <button type="submit" class="btn btn-primary btn-sm">Sort</button>
+                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-sort-alpha-down"></i>Sort</button>
             </form>
         </div>
 
@@ -75,7 +75,7 @@
                             <c:when test="${count == 0}">
                                 <a href="<c:url value='/users/${user.id}/tasks/new'/>"
                                    class="btn btn-primary btn-sm">
-                                    Add task
+                                   <i class="bi bi-plus-circle"></i>Add task
                                 </a>
                             </c:when>
                             <c:otherwise>
@@ -91,7 +91,7 @@
                     <!-- Редагування: доступне для ADMIN та REGULAR -->
                     <sec:authorize access="hasAnyRole('ROLE_ADMINISTRATOR','ROLE_REGULAR_USER')">
                         <td>
-                            <a href="<c:url value='/edit-user-${user.id}'/>" class="btn btn-success custom-width">edit</a>
+                            <a href="<c:url value='/edit-user-${user.id}'/>" class="btn btn-success custom-width"><i class="bi bi-pencil-square"></i>Edit</a>
                         </td>
                     </sec:authorize>
 
@@ -103,7 +103,7 @@
                                 data-target="#deleteModal"
                                 data-user-id="${user.id}"
                                 data-user-name="${user.name}">
-                                Delete
+                                <i class="bi bi-trash"></i>Delete
                         </button>
                     </td>
                     </sec:authorize>
@@ -120,7 +120,7 @@
       <sec:authorize access="hasRole('ROLE_ADMINISTRATOR')">
           <a href="<c:url value='/newuser'/>"
              class="btn btn-primary btn-sm pull-left">
-              Add New User
+             <i class="bi bi-plus-circle"></i>Add New User
           </a>
       </sec:authorize>
 
@@ -129,7 +129,7 @@
           <a href="<c:url value='/users/tasks'/>"
              class="btn btn-info btn-sm"
              style="margin-left:10px;">
-              View All Tasks
+              <i class="bi bi-list-task"></i>View All Tasks
           </a>
 
       </sec:authorize>
@@ -150,7 +150,7 @@
                               placeholder="Search..." />
 
                        <button type="submit" class="btn btn-primary btn-sm">
-                           Search
+                           <i class="bi bi-search"></i>Search
                        </button>
                    </form>
            </div>
