@@ -7,9 +7,11 @@ import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table(name = "TASKS")
@@ -198,5 +200,29 @@ public class Task {
                 ", status=" + status +
                 ", priority=" + priority +
                 '}';
+    }
+
+    public String getDeadlineCountdown() {
+
+        if (deadline == null) {
+            return "";
+        }
+
+        LocalDate today = LocalDate.now();
+        long days = ChronoUnit.DAYS.between(today, deadline);
+
+        if (days > 1) {
+            return days + " days left";
+        }
+
+        if (days == 1) {
+            return "1 day left";
+        }
+
+        if (days == 0) {
+            return "Due today";
+        }
+
+        return "Overdue by " + Math.abs(days) + " days";
     }
 }

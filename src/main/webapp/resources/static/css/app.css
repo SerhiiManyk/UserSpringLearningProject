@@ -167,3 +167,8 @@ table td {
     background: #f7f7f7;
     z-index: 2;
 }
+
+.deadline-countdown{
+    font-size:11px;
+    color:#6c757d;
+}

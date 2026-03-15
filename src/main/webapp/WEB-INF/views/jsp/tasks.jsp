@@ -71,6 +71,8 @@
                         <td>${task.updatedAtFormatted}</td>
                         <td class="${task.overdue ? 'text-danger' : (task.dueSoon ? 'text-warning' : '')}">
                             ${task.deadlineFormatted}
+                            <br>
+                            <small class="deadline-countdown">${task.deadlineCountdown}</small>
                         </td>
                         <td>
                             <c:out value="${task.owner != null ? task.owner.name : '-'}"/>
