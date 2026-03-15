@@ -151,7 +151,9 @@ table td {
 }
 
 .btn:hover {
-    transform: translateY(-1px);
+    opacity: 0.9;
+    transform: translateY(-2px);
+    transition: all 0.2s;
 }
 
 .table thead th {
