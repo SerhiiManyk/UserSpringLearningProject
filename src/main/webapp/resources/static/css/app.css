@@ -3,8 +3,12 @@ body, #mainWrapper {
 	background-color:rgb(245, 245, 245);
 }
 
-body, .form-control{
-	font-size:12px!important;
+body {
+    font-size: 13px;
+}
+
+.form-control {
+    font-size: 13px;
 }
 
 .floatRight{
@@ -17,16 +21,16 @@ body, .form-control{
 }
 
 .generic-container {
-  position:relative;
-  width:80%;
-  margin-left: 20px;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  position: relative;
+  max-width: 1200px;
+  margin: 20px auto;
   padding: 20px;
+
   background-color: #EAE7E7;
   border: 1px solid #ddd;
-  border-radius: 4px;
-  box-shadow: 0 0 30px black;
+  border-radius: 6px;
+
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
 }
 
 .custom-width {
@@ -38,7 +42,7 @@ body, .form-control{
     font-weight: 600;
 }
 
-.badge {
+.task-count-badge {
     background-color: #5bc0de;
     padding: 4px 8px;
     border-radius: 6px;
@@ -71,16 +75,13 @@ body, .form-control{
 .priority-text {
     font-weight: 500;
     font-size: 13px;
+    text-transform: capitalize;
 }
 
 .panel-title i,
 h3 i {
     margin-right: 8px;
     color: #0d6efd;
-}
-
-.priority-text {
-    text-transform: capitalize;
 }
 
 .btn i,
@@ -96,17 +97,73 @@ h3 i {
 }
 
 .status-TODO{
-    background:#d9edf7;
+    background:#e7f3ff;
+    color:#0d6efd;
 }
 
 .status-IN_PROGRESS{
-    background:#fcf8e3;
+    background:#fff6db;
+    color:#b58100;
 }
 
 .status-DONE{
-    background:#dff0d8;
+    background:#e8f8ed;
+    color:#198754;
 }
 
-table td{
+table td {
     vertical-align: middle;
+    word-break: break-word;
+}
+
+@media (max-width: 768px) {
+
+    table {
+        font-size: 12px;
+    }
+
+    .btn {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+
+    .panel-title {
+        font-size: 16px;
+    }
+
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f5f9ff;
+}
+
+.table-hover tbody tr {
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f5f9ff;
+    transform: scale(1.01);
+}
+
+.btn {
+    transition: all 0.15s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.table thead th {
+    position: sticky;
+    top: 0;
+    background: #f7f7f7;
+    z-index: 2;
+}
+
+.table thead th {
+    position: sticky;
+    top: 0;
+    background: #f7f7f7;
+    z-index: 2;
 }

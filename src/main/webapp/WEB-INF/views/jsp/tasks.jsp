@@ -7,6 +7,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Tasks List</title>
 
     <link href="<c:url value='/resources/static/css/bootstrap.css'/>" rel="stylesheet">
@@ -16,7 +17,7 @@
 
 <body style="background-color: #e9f2ff;">
 
-<div class="generic-container">
+<div class="container-fluid">
     <div class="panel panel-default">
 
         <!-- PANEL HEADER -->
@@ -24,17 +25,18 @@
             <h3>
             <i class="bi bi-list-task"></i>Tasks of
             <span class="task-owner">${taskOwner.name}</span>
-            <span class="badge">${fn:length(tasks)}</span>
+            <span class="task-count-badge">${fn:length(tasks)}</span>
             </h3>
         </div>
 
         <!-- PANEL BODY -->
         <div class="panel-body">
 
+            <div class="table-responsive">
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th width="120">PRIORITY</th>
+                    <th>PRIORITY</th>
                     <th>TITLE</th>
                     <th>DESCRIPTION</th>
                     <th>CREATE TIME</th>
@@ -42,8 +44,8 @@
                     <th>DEADLINE</th>
                     <th>OWNER</th>
                     <th>STATUS</th>
-                    <th width="90"></th>
-                    <th width="90"></th>
+                    <th></th>
+                    <th></th>
                 </tr>
                 </thead>
 
@@ -114,12 +116,13 @@
                 </c:forEach>
                 </tbody>
             </table>
+            </div>
 
-            <div class="clearfix" style="margin-top: 20px;">
+            <div class="d-flex justify-content-between flex-wrap" style="margin-top:20px;">
 
                 <!-- Back to users -->
                 <a href="<c:url value='/users'/>"
-                   class="btn btn-default pull-left">
+                   class="btn btn-default">
                    <i class="bi bi-arrow-return-left"></i>Back to users
                 </a>
 
@@ -128,13 +131,13 @@
 
                     <c:when test="${currentUser.userRole != 'ADMINISTRATOR'}">
                         <a href="<c:url value='/users/${userId}/tasks/new'/>"
-                           class="btn btn-success pull-right">
+                           class="btn btn-success">
                            <i class="bi bi-plus-circle"></i>Create new task
                         </a>
                     </c:when>
 
                     <c:otherwise>
-                        <form method="get" action="<c:url value='/users/tasks/new'/>" class="pull-right form-inline">
+                        <form method="get" action="<c:url value='/users/tasks/new'/>" class="form-inline">
                             <select name="selectedUserId" class="form-control input-sm" required>
                                 <c:forEach items="${allUsers}" var="user">
                                     <option value="${user.id}">${user.name} (${user.email})</option>
