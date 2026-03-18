@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -84,16 +85,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getSearchResult(SortField sortField, String searchValue) {
+
         if (sortField == null || searchValue == null || searchValue.trim().isEmpty()) {
             return userDao.getAll();
         }
+
         if (sortField == SortField.ROLE) {
-            try {
-                return userDao.searchUsersByRole(UserRole.valueOf(searchValue.trim().toUpperCase()));
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Invalid role value: " + searchValue);
-            }
+            return userDao.getAll().stream()
+                    .filter(u -> u.getUserRole().name().toLowerCase()
+                            .contains(searchValue.trim().toLowerCase()))
+                    .collect(Collectors.toList());
         }
+
         return userDao.searchUsers(sortField, searchValue);
     }
 
