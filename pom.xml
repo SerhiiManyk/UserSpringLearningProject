@@ -2,14 +2,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.starovoit.library</groupId>
-    <artifactId>Library</artifactId>
+    <groupId>com.manyk.ambulatory</groupId>
+    <artifactId>Ambulatory</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>Library</name>
+    <name>Ambulatory</name>
 
     <properties>
-        <jdk.version>1.8</jdk.version>
+        <jdk.version>11</jdk.version>
         <spring.version>4.3.8.RELEASE</spring.version>
         <jstl.version>1.2</jstl.version>
         <hibernate.version>5.6.15.Final</hibernate.version>
@@ -76,12 +76,6 @@
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.7.3</version>
@@ -89,10 +83,9 @@
 
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>3.0-alpha-1</version>
-            <type>jar</type>
-            <scope>compile</scope>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Hibernate dependencies -->
@@ -120,6 +113,59 @@
             <version>${hibernate.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.2.5.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator-annotation-processor</artifactId>
+            <version>6.2.5.Final</version>
+        </dependency>
+
+        <!--JUnit 5 -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--Mockito Core-->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Spring Security -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>4.2.13.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>4.2.13.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>4.2.13.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>4.2.13.RELEASE</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -128,7 +174,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
+                <version>3.10.1</version>
                 <configuration>
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
@@ -146,9 +192,15 @@
                         --add-opens java.base/java.lang.invoke=ALL-UNNAMED
                     </jvmArgs>
                     <webApp>
-                        <contextPath>/library</contextPath>
+                        <contextPath>/ambulatory</contextPath>
                     </webApp>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
             </plugin>
 
         </plugins>
