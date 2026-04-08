@@ -1,10 +1,8 @@
 package com.manser.pr.controller;
 
-import com.manser.pr.domain.SortField;
-import com.manser.pr.domain.SortOrder;
-import com.manser.pr.domain.User;
-import com.manser.pr.domain.UserRole;
+import com.manser.pr.domain.*;
 import com.manser.pr.exception.UserAlreadyExistsException;
+import com.manser.pr.service.TaskService;
 import com.manser.pr.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,14 +15,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
 
     private final UserService userService;
+    private final TaskService taskService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, TaskService taskService) {
         this.userService = userService;
+        this.taskService = taskService;
     }
 
     @ModelAttribute("roles")
@@ -50,10 +52,17 @@ public class UserController {
             userService.checkEmailUnique(user);
             userService.save(user);
         } catch (UserAlreadyExistsException e) {
-            redirectAttributes.addFlashAttribute("registrationfail", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertMessage", e.getMessage());
+            redirectAttributes.addFlashAttribute("backUrl", "/newuser");
+            redirectAttributes.addFlashAttribute("backLabel", "Back to registration");
             return "redirect:/successfull";
         } catch (Exception j) {
-            redirectAttributes.addFlashAttribute("registrationfail", "WRONG REGISTRATION " + j.getMessage());
+            redirectAttributes.addFlashAttribute(
+                    "alertMessage",
+                    "Registration failed: " + j.getMessage()
+            );
+            redirectAttributes.addFlashAttribute("backUrl", "/newuser");
+            redirectAttributes.addFlashAttribute("backLabel", "Back");
             return "redirect:/successfull";
         }
         redirectAttributes.addFlashAttribute("success", "User " + user.getName() + " registered successfully");
@@ -72,7 +81,8 @@ public class UserController {
     }
 
     @PostMapping("/edit-user-{id}")
-    public String updateUser(@Valid User user,
+    public String updateUser(@PathVariable Long id,
+                             @Valid User user,
                              BindingResult result,
                              RedirectAttributes redirectAttributes,
                              Model model) {
@@ -80,14 +90,22 @@ public class UserController {
             model.addAttribute("edit", true);
             return "registration";
         }
+        user.setId(id);
         try {
             userService.checkEmailUnique(user);
             userService.update(user);
         } catch (UserAlreadyExistsException e) {
-            redirectAttributes.addFlashAttribute("registrationfail", e.getMessage());
+            redirectAttributes.addFlashAttribute("alertMessage", e.getMessage());
+            redirectAttributes.addFlashAttribute("backUrl", "/edit-user-" + user.getId());
+            redirectAttributes.addFlashAttribute("backLabel", "Back to edit");
             return "redirect:/successfull";
         } catch (Exception j) {
-            redirectAttributes.addFlashAttribute("registrationfail", "WRONG UPDATE : " + j.getMessage());
+            redirectAttributes.addFlashAttribute(
+                    "alertMessage",
+                    "Update failed: " + j.getMessage()
+            );
+            redirectAttributes.addFlashAttribute("backUrl", "/users");
+            redirectAttributes.addFlashAttribute("backLabel", "Back to users");
             return "redirect:/successfull";
         }
         redirectAttributes.addFlashAttribute("success", "User " + user.getName() + " updated successfully");
@@ -121,9 +139,37 @@ public class UserController {
                                   Model model,
                                   RedirectAttributes redirectAttributes) {
         try {
-            model.addAttribute("users", userService.getAllSorted(sortField, sortOrder));
+            List<User> users = (sortField != null)
+                    ? userService.getAllSorted(sortField, sortOrder)
+                    : userService.getAll();
+
+            for (User user : users) {
+                boolean overdue = false;
+                boolean dueSoon = false;
+
+                if (user.getTasks() != null) {
+                    for (Task task : user.getTasks()) {
+                        if (task.isOverdue()) {
+                            overdue = true;
+                        } else if (task.isDueSoon()) {
+                            dueSoon = true;
+                        }
+                    }
+                }
+
+                user.setHasOverdueTasks(overdue);
+                user.setHasDueSoonTasks(dueSoon);
+            }
+
+            model.addAttribute("users", users);
+            model.addAttribute("taskCounts", buildTaskCountMap());
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("registrationfail", "SOMTHING WRONG : " + e.getMessage());
+            redirectAttributes.addFlashAttribute(
+                    "alertMessage",
+                    "Unable to load users: " + e.getMessage()
+            );
+            redirectAttributes.addFlashAttribute("backUrl", "/");
+            redirectAttributes.addFlashAttribute("backLabel", "Home");
             return "redirect:/successfull";
         }
         return "userlist";
@@ -138,15 +184,25 @@ public class UserController {
             List<User> resultList = userService.getSearchResult(sortField, searchValue);
 
             model.addAttribute("users", resultList);
+            model.addAttribute("taskCounts", buildTaskCountMap());
 
             if (resultList.isEmpty()) {
                 model.addAttribute("infoMessage", "No results found");
             }
-        }catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             model.addAttribute("users", List.of());
             model.addAttribute("infoMessage", e.getMessage());
         }
         return "userlist";
+    }
+
+    private Map<Long, Long> buildTaskCountMap() {
+        List<Object[]> counts = taskService.countTasksGroupedByOwner();
+        return counts.stream()
+                .collect(Collectors.toMap(
+                        row -> ((User) row[0]).getId(),
+                        row -> (Long) row[1]
+                ));
     }
 
 }

@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface UserService extends CrudService<User>{
 
-    List<User> findAllUsers();
-
     User loginUser(String email, String password);
 
     User getByEmail(String email);
@@ -19,4 +17,6 @@ public interface UserService extends CrudService<User>{
     List<User> getAllSorted(SortField sortField, SortOrder sortOrder);
 
     List<User> getSearchResult(SortField sortField, String searchValue);
+
+     User getCurrentUser();
 }

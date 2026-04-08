@@ -3,6 +3,7 @@ package com.manser.pr.controller;
 import com.manser.pr.domain.LoginForm;
 import com.manser.pr.domain.User;
 import com.manser.pr.service.UserService;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,19 +29,4 @@ public class LoginController {
         return "login";
     }
 
-    @PostMapping("/login")
-    public String loginCheck(@Valid LoginForm loginForm,
-                             BindingResult result,
-                             RedirectAttributes redirectAttributes) {
-        if (result.hasErrors()) {
-            return "login";
-        }
-        User user = userService.loginUser(loginForm.getEmail(), loginForm.getPassword());
-        if (user == null) {
-            result.reject("login.invalid");
-            return "login";
-        }else {
-            return "redirect:/users";
-        }
-    }
 }
