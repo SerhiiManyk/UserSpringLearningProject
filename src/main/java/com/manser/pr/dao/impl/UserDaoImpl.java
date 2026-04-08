@@ -29,13 +29,6 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<User> findAllUsers() {
-        return getSession()
-                .createQuery("FROM User ORDER BY id", User.class)
-                .getResultList();
-    }
-
-    @Override
     public Long save(User entity) {
         getSession().save(entity);
         return entity.getId();
@@ -65,7 +58,10 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<User> getAll() {
         return getSession()
-                .createQuery("FROM User", User.class)
+                .createQuery(
+                        "SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.tasks",
+                        User.class
+                )
                 .getResultList();
     }
 
@@ -99,7 +95,11 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<User> sortAllUsers(SortField sortField, SortOrder sortOrder) {
         return getSession()
-                .createQuery("FROM User u ORDER BY u." + sortField.getDbField() + " " + sortOrder.name(), User.class)
+                .createQuery(
+                        "SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.tasks " +
+                                "ORDER BY u." + sortField.getDbField() + " " + sortOrder.name(),
+                        User.class
+                )
                 .getResultList();
     }
 
